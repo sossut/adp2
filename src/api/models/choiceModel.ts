@@ -16,10 +16,11 @@ const getAllChoices = async (): Promise<Choice[]> => {
   if (rows.length === 0) {
     throw new CustomError('No choices found', 404);
   }
-  const choices: Choice[] = rows.map((row) => ({
-    ...row
-  }));
-  return choices;
+  // const choices: Choice[] = rows.map((row) => ({
+  //   ...row
+  // }));
+  // return choices;
+  return rows;
 };
 
 const getChoice = async (id: string): Promise<GetChoice> => {

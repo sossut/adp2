@@ -32,14 +32,15 @@ const getAllHousingCompanies = async (): Promise<HousingCompany[]> => {
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  const housingCompanies: HousingCompany[] = rows.map((row) => ({
-    ...row,
-    user: JSON.parse(row.user?.toString() || '{}'),
-    postcode: JSON.parse(row.postcode?.toString() || '{}'),
-    city: JSON.parse(row.city?.toString() || '{}'),
-    address: JSON.parse(row.address?.toString() || '{}')
-  }));
-  return housingCompanies;
+  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
+  //   ...row,
+  //   user: JSON.parse(row.user?.toString() || '{}'),
+  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
+  //   city: JSON.parse(row.city?.toString() || '{}'),
+  //   address: JSON.parse(row.address?.toString() || '{}')
+  // }));
+  // return housingCompanies;
+  return rows;
 };
 
 const getHousingCompany = async (id: number, userID: number, role: string) => {
@@ -106,14 +107,15 @@ const getHousingCompaniesByUser = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  const housingCompanies: HousingCompany[] = rows.map((row) => ({
-    ...row,
-    user: JSON.parse(row.user?.toString() || '{}'),
-    postcode: JSON.parse(row.postcode?.toString() || '{}'),
-    city: JSON.parse(row.city?.toString() || '{}'),
-    address: JSON.parse(row.address?.toString() || '{}')
-  }));
-  return housingCompanies;
+  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
+  //   ...row,
+  //   user: JSON.parse(row.user?.toString() || '{}'),
+  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
+  //   city: JSON.parse(row.city?.toString() || '{}'),
+  //   address: JSON.parse(row.address?.toString() || '{}')
+  // }));
+  // return housingCompanies;
+  return rows;
 };
 
 const getApartmentCountByHousingCompany = async (
@@ -176,14 +178,15 @@ const getHousingCompaniesByCurrentUser = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  const housingCompanies: HousingCompany[] = rows.map((row) => ({
-    ...row,
-    user: JSON.parse(row.user?.toString() || '{}'),
-    postcode: JSON.parse(row.postcode?.toString() || '{}'),
-    city: JSON.parse(row.city?.toString() || '{}'),
-    address: JSON.parse(row.address?.toString() || '{}')
-  }));
-  return housingCompanies;
+  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
+  //   ...row,
+  //   user: JSON.parse(row.user?.toString() || '{}'),
+  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
+  //   city: JSON.parse(row.city?.toString() || '{}'),
+  //   address: JSON.parse(row.address?.toString() || '{}')
+  // }));
+  // return housingCompanies;
+  return rows;
 };
 
 const getHousingCompaniesByPostcode = async (
@@ -213,14 +216,15 @@ const getHousingCompaniesByPostcode = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  const housingCompanies: HousingCompany[] = rows.map((row) => ({
-    ...row,
-    user: JSON.parse(row.user?.toString() || '{}'),
-    postcode: JSON.parse(row.postcode?.toString() || '{}'),
-    city: JSON.parse(row.city?.toString() || '{}'),
-    address: JSON.parse(row.address?.toString() || '{}')
-  }));
-  return housingCompanies;
+  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
+  //   ...row,
+  //   user: JSON.parse(row.user?.toString() || '{}'),
+  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
+  //   city: JSON.parse(row.city?.toString() || '{}'),
+  //   address: JSON.parse(row.address?.toString() || '{}')
+  // }));
+  // return housingCompanies;
+  return rows;
 };
 
 const getHousingCompaniesByCity = async (
@@ -250,14 +254,15 @@ const getHousingCompaniesByCity = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  const housingCompanies: HousingCompany[] = rows.map((row) => ({
-    ...row,
-    user: JSON.parse(row.user?.toString() || '{}'),
-    postcode: JSON.parse(row.postcode?.toString() || '{}'),
-    city: JSON.parse(row.city?.toString() || '{}'),
-    address: JSON.parse(row.address?.toString() || '{}')
-  }));
-  return housingCompanies;
+  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
+  //   ...row,
+  //   user: JSON.parse(row.user?.toString() || '{}'),
+  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
+  //   city: JSON.parse(row.city?.toString() || '{}'),
+  //   address: JSON.parse(row.address?.toString() || '{}')
+  // }));
+  // return housingCompanies;
+  return rows;
 };
 
 const getHousingCompaniesByStreet = async (
@@ -287,13 +292,14 @@ const getHousingCompaniesByStreet = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  const housingCompanies: HousingCompany[] = rows.map((row) => ({
-    ...row,
-    user: JSON.parse(row.user?.toString() || '{}'),
-    postcode: JSON.parse(row.postcode?.toString() || '{}'),
-    city: JSON.parse(row.city?.toString() || '{}')
-  }));
-  return housingCompanies;
+  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
+  //   ...row,
+  //   user: JSON.parse(row.user?.toString() || '{}'),
+  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
+  //   city: JSON.parse(row.city?.toString() || '{}')
+  // }));
+  // return housingCompanies;
+  return rows;
 };
 
 const postHousingCompany = async (data: any): Promise<number> => {

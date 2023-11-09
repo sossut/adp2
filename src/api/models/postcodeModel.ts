@@ -19,11 +19,12 @@ const getAllPostcodes = async (): Promise<Postcode[]> => {
   if (rows.length === 0) {
     throw new CustomError('No postcodes found', 404);
   }
-  const postcodes: Postcode[] = rows.map((row) => ({
-    ...row,
-    city: JSON.parse(row.city?.toString() || '{}')
-  }));
-  return postcodes;
+  // const postcodes: Postcode[] = rows.map((row) => ({
+  //   ...row,
+  //   city: JSON.parse(row.city?.toString() || '{}')
+  // }));
+  // return postcodes;
+  return rows;
 };
 
 const getPostcode = async (id: string): Promise<GetPostcode> => {

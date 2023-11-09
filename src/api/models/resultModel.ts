@@ -30,12 +30,13 @@ const getAllResults = async (): Promise<Result[]> => {
   if (rows.length === 0) {
     throw new CustomError('No results found', 404);
   }
-  const results: Result[] = rows.map((row) => ({
-    ...row,
-    survey: JSON.parse(row.survey?.toString() || '{}'),
-    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
-  }));
-  return results;
+  // const results: Result[] = rows.map((row) => ({
+  //   ...row,
+  //   survey: JSON.parse(row.survey?.toString() || '{}'),
+  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  // }));
+  // return results;
+  return rows;
 };
 
 const getResult = async (id: string): Promise<GetResult> => {

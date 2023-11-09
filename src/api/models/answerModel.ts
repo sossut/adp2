@@ -73,14 +73,15 @@ const getAnswersBySurvey = async (
   if (rows.length === 0) {
     throw new CustomError('No answers found', 404);
   }
-  const answers: Answer[] = rows.map((row) => ({
-    ...row,
-    question: JSON.parse(row.question?.toString() || '{}'),
-    survey: JSON.parse(row.survey?.toString() || '{}'),
-    user: JSON.parse(row.user?.toString() || '{}'),
-    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
-  }));
-  return answers;
+  // const answers: Answer[] = rows.map((row) => ({
+  //   ...row,
+  //   question: JSON.parse(row.question?.toString() || '{}'),
+  //   survey: JSON.parse(row.survey?.toString() || '{}'),
+  //   user: JSON.parse(row.user?.toString() || '{}'),
+  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  // }));
+  // return answers;
+  return rows;
 };
 
 const postAnswer = async (answer: PostAnswer) => {
