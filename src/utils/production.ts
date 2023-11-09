@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from 'express';
 const production = (app: any, port: string, httpsPort: string) => {
   app.enable('trust proxy');
   // const sslkey = fs.readFileSync('/etc/pki/tls/private/ca.key');
-  const sslcert = fs.readFileSync('/etc/secrets/ca.crt');
+  const sslcert = fs.readFileSync('/etc/secrets/ca.crt.pem');
   const options = {
     // key: sslkey,
     cert: sslcert
