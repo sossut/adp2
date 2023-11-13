@@ -7,7 +7,8 @@ import {
   putSurvey,
   deleteSurvey,
   getSurveyByKey,
-  getSurveysByHousingCompany
+  getSurveysByHousingCompany,
+  checkIfSurveyKeyExists
 } from '../models/surveyModel';
 import { Request, Response, NextFunction } from 'express';
 import CustomError from '../../classes/CustomError';
@@ -19,6 +20,8 @@ import {
   getApartmentCountByHousingCompany
 } from '../models/housingCompanyModel';
 import { deleteResultBySurvey } from '../models/resultModel';
+// eslint-disable-next-line import/no-extraneous-dependencies
+var randomstring = require('randomstring');
 
 const surveyListGet = async (
   req: Request,
@@ -124,6 +127,14 @@ const surveyPost = async (
     throw new CustomError(messages, 400);
   }
   try {
+    let check = true;
+    while (check) {
+      const key = randomstring.generate(12);
+      check = await checkIfSurveyKeyExists(key);
+      if (!check) {
+        req.body.survey_key = key;
+      }
+    }
     if ((req.user as User).role !== 'admin') {
       const checkUser = await checkIfHousingCompanyBelongsToUser(
         req.body.housing_company_id as number,

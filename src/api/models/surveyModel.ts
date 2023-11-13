@@ -109,6 +109,25 @@ const getSurveyByKey = async (key: string): Promise<Survey> => {
   return rows[0];
 };
 
+const checkIfSurveyKeyExists = async (key: string): Promise<boolean> => {
+  const [rows] = await promisePool.execute<GetSurvey[]>(
+    `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
+    FROM surveys
+    JOIN users
+    ON surveys.user_id = users.id
+    JOIN housing_companies
+    ON housing_company_id = housing_companies.id
+    WHERE survey_key = ?`,
+    [key]
+  );
+  if (rows.length === 0) {
+    return false;
+  }
+  return true;
+};
+
 const checkIfSurveyBelongsToUser = async (
   surveyID: number,
   userID: number
@@ -221,5 +240,6 @@ export {
   deleteAllSurveysFromHousingCompany,
   getSurveyByKey,
   getSurveysByHousingCompany,
-  checkIfSurveyBelongsToUser
+  checkIfSurveyBelongsToUser,
+  checkIfSurveyKeyExists
 };

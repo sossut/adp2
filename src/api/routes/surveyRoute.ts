@@ -23,7 +23,6 @@ router
     body('min_responses').isNumeric().optional().escape(),
     body('max_responses').isNumeric().optional().escape(),
     body('survey_status').isString().optional().escape(),
-    body('survey_key').isString().notEmpty().escape(),
     body('housing_company_id').isNumeric().notEmpty().escape(),
     surveyPost
   );
