@@ -4,6 +4,7 @@ interface Section {
   id: number;
   section_text: string;
   active: 'true' | 'false';
+  description?: string;
 }
 
 interface GetSection extends RowDataPacket, Section {}

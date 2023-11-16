@@ -37,6 +37,8 @@ router
       .isLength({ min: 1, max: 255 })
       .optional()
       .escape(),
+    body('street_id').isNumeric().optional().escape(),
+    body('postcode_id').isNumeric().optional().escape(),
     body('postcode')
       .isString()
       .isLength({ min: 1, max: 255 })
@@ -52,6 +54,7 @@ router
       .isLength({ min: 1, max: 255 })
       .optional()
       .escape(),
+    body('city_id').isNumeric().optional().escape(),
     housingCompanyPost
   );
 

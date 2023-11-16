@@ -22,6 +22,7 @@ router
       .isLength({ min: 1, max: 255 })
       .escape()
       .notEmpty(),
+    body('description').isString().optional().escape(),
     sectionPost
   );
 

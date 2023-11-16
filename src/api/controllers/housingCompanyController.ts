@@ -208,9 +208,12 @@ const housingCompanyPost = async (
       user_id: number;
       address_number: string;
       street_name: string;
+      street_id: number;
       postcode_name: string;
       postcode: string;
+      postcode_id: number;
       city_name: string;
+      city_id: number;
     }
   >,
   res: Response,
@@ -231,7 +234,11 @@ const housingCompanyPost = async (
 
     let city;
     try {
-      city = await getCityIdByName(req.body.city_name);
+      if (!req.body.city_id) {
+        city = await getCityIdByName(req.body.city_name);
+      } else {
+        city = req.body.city_id;
+      }
     } catch (error) {}
 
     if (!city) {
@@ -240,7 +247,11 @@ const housingCompanyPost = async (
 
     let postcode;
     try {
-      postcode = await getPostcodeIdByCode(req.body.postcode);
+      if (!req.body.postcode_id) {
+        postcode = await getPostcodeIdByCode(req.body.postcode);
+      } else {
+        postcode = req.body.postcode_id;
+      }
     } catch (error) {}
     if (!postcode) {
       postcode = await postPostcode({
@@ -252,10 +263,14 @@ const housingCompanyPost = async (
 
     let street;
     try {
-      street = await getStreetIdByNameAndPostcodeID(
-        req.body.street_name,
-        postcode
-      );
+      if (!req.body.street_id) {
+        street = await getStreetIdByNameAndPostcodeID(
+          req.body.street_name,
+          postcode
+        );
+      } else {
+        street = req.body.street_id;
+      }
     } catch (error) {}
     if (!street) {
       street = await postStreet({

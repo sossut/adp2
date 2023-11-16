@@ -31,8 +31,8 @@ const getSection = async (id: string): Promise<Section> => {
 
 const postSection = async (section: PostSection) => {
   const [headers] = await promisePool.execute<ResultSetHeader>(
-    'INSERT INTO sections (section_text) VALUES (?);',
-    [section.section_text]
+    'INSERT INTO sections (section_text, description) VALUES (?, ?);',
+    [section.section_text, section.description]
   );
   if (headers.affectedRows === 0) {
     throw new CustomError('Section not created', 400);

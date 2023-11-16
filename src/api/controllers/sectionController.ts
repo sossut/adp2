@@ -54,6 +54,9 @@ const sectionPost = async (
         .join(', ');
       throw new CustomError(messages, 400);
     }
+    if (!req.body.description) {
+      req.body.description = '';
+    }
     const result = await postSection(req.body);
     if (result) {
       res.json({
