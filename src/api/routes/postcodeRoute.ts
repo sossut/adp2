@@ -4,7 +4,8 @@ import {
   postcodeGet,
   postcodePost,
   postcodePut,
-  postcodeDelete
+  postcodeDelete,
+  postcodeListGetWhereCurrentUserHasHousingCompanies
 } from '../controllers/postcodeController';
 import { body, param } from 'express-validator';
 import passport from 'passport';
@@ -38,6 +39,14 @@ router
     passport.authenticate('jwt', { session: false }),
     param('id').isNumeric(),
     postcodeDelete
+  );
+
+router
+  .route('/housing-company/user/:id')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    param('id').isNumeric(),
+    postcodeListGetWhereCurrentUserHasHousingCompanies
   );
 
 export default router;

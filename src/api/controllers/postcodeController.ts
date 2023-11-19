@@ -3,6 +3,7 @@ import {
   getPostcode,
   getAllPostcodes,
   postPostcode,
+  getPostcodesWhereCurrentUserHasHousingCompanies,
   putPostcode,
   deletePostcode
 } from '../models/postcodeModel';
@@ -49,6 +50,26 @@ const postcodeGet = async (
     const id = req.params.id;
     const postcode = await getPostcode(id);
     res.json(postcode);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const postcodeListGetWhereCurrentUserHasHousingCompanies = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors.array().join(', ');
+      throw new CustomError(messages, 400);
+    }
+    const postcodes = await getPostcodesWhereCurrentUserHasHousingCompanies(
+      (req.user as User).id
+    );
+    res.json(postcodes);
   } catch (error) {
     next(error);
   }
@@ -127,6 +148,7 @@ const postcodeDelete = async (
 export {
   postcodeListGet,
   postcodeGet,
+  postcodeListGetWhereCurrentUserHasHousingCompanies,
   postcodePost,
   postcodePut,
   postcodeDelete

@@ -7,6 +7,10 @@ import {
   Postcode,
   PutPostcode
 } from '../../interfaces/Postcode';
+import {
+  GetHousingCompany,
+  HousingCompany
+} from '../../interfaces/HousingCompany';
 
 const getAllPostcodes = async (): Promise<Postcode[]> => {
   const [rows] = await promisePool.execute<GetPostcode[]>(
@@ -55,6 +59,28 @@ const getPostcodeIdByCode = async (code: string): Promise<number> => {
   return rows[0].id;
 };
 
+const getPostcodesWhereCurrentUserHasHousingCompanies = async (
+  userID: number
+): Promise<HousingCompany[]> => {
+  const [rows] = await promisePool.execute<GetHousingCompany[]>(
+    `SELECT postcodes.id, postcodes.code, postcodes.name FROM housing_companies
+    JOIN addresses
+    ON housing_companies.address_id = addresses.id
+    JOIN streets
+    ON addresses.street_id = streets.id
+    JOIN postcodes
+    ON streets.postcode_id = postcodes.id
+    WHERE housing_companies.user_id = ?
+    ;`,
+    [userID]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('No housing companies found', 404);
+  }
+  // const postcodes: number[] = rows.map((row) => row.id);
+  return rows;
+};
+
 const postPostcode = async (postcode: PostPostcode) => {
   const [headers] = await promisePool.execute<ResultSetHeader>(
     'INSERT INTO postcodes (code, name, city_id) VALUES (?, ?, ?);',
@@ -93,6 +119,7 @@ export {
   getAllPostcodes,
   getPostcode,
   getPostcodeIdByCode,
+  getPostcodesWhereCurrentUserHasHousingCompanies,
   postPostcode,
   putPostcode,
   deletePostcode
