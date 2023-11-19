@@ -42,10 +42,9 @@ router
   );
 
 router
-  .route('/housing-company/user/:id')
+  .route('/housing-company/user/current')
   .get(
     passport.authenticate('jwt', { session: false }),
-    param('id').isNumeric(),
     postcodeListGetWhereCurrentUserHasHousingCompanies
   );
 

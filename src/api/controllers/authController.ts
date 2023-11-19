@@ -21,10 +21,11 @@ const login = (req: Request, res: Response, next: NextFunction) => {
         }
 
         delete user.password; // this is the reason for partial
-        const token = jwt.sign(user, process.env.JWT_SECRET as string, { expiresIn: '1d' });
+        //change back when ready to use refresh tokens , { expiresIn: '1d' }
+        const token = jwt.sign(user, process.env.JWT_SECRET as string);
         return res.json({ user, token });
       });
-    },
+    }
   )(req, res, next);
 };
 
