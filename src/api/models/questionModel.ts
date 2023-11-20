@@ -46,7 +46,7 @@ const getQuestion = async (id: string): Promise<Question> => {
   const [rows] = await promisePool.execute<GetQuestion[]>(
     `SELECT
         JSON_OBJECT ('question_id', questions.id, 'question', questions.question, 'weight', questions.weight, 'question_order', questions.question_order, 'active', active, 'section_id', section_id) AS question,
-        GROUP_CONCAT(JSON_OBJECT('choices_id', choices.id, 'choice_text', choices.choice_text, 'choice_value', choices.choice_value)) AS choices
+        CONCAT('[', GROUP_CONCAT(JSON_OBJECT('choices_id', choices.id, 'choice_text', choices.choice_text, 'choice_value', choices.choice_value)), ']') AS choices
       FROM questions
         JOIN questions_choices
           ON questions.id = questions_choices.question_id
