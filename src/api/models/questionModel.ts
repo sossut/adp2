@@ -52,7 +52,8 @@ const getQuestion = async (id: string): Promise<Question> => {
           ON questions.id = questions_choices.question_id
         JOIN choices
           ON questions_choices.choice_id = choices.id
-      WHERE questions.id = ?;`,
+      WHERE questions.id = ?
+      GROUP BY question_id;`,
     [id]
   );
   if (rows.length === 0) {
