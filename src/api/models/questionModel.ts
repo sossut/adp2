@@ -42,7 +42,7 @@ const getAllActiveQuestions = async (): Promise<Question[]> => {
   // return rows;
 };
 
-const getQuestion = async (id: string): Promise<Question> => {
+const getQuestion = async (id: string): Promise<Question[]> => {
   const [rows] = await promisePool.execute<GetQuestion[]>(
     `SELECT
         JSON_OBJECT ('question_id', questions.id, 'question', questions.question, 'weight', questions.weight, 'question_order', questions.question_order, 'active', active, 'section_id', section_id) AS question,
@@ -59,7 +59,12 @@ const getQuestion = async (id: string): Promise<Question> => {
   if (rows.length === 0) {
     throw new CustomError('No questions found', 404);
   }
-  return rows[0];
+  const questions: Question[] = rows.map((row) => ({
+    ...row,
+    // question: JSON.parse(row.question?.toString() || '{}'),
+    choices: JSON.parse(row.choices?.toString() || '{}')
+  }));
+  return questions;
 };
 
 const postQuestion = async (question: PostQuestion) => {
