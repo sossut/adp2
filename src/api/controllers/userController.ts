@@ -11,7 +11,8 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import { User, PostUser } from '../../interfaces/User';
 import CustomError from '../../classes/CustomError';
-
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as EmailValidator from 'email-validator';
 const salt = bcrypt.genSaltSync(12);
 
 const userListGet = async (req: Request, res: Response, next: NextFunction) => {
@@ -57,18 +58,21 @@ const userPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const errors = validationResult(req.body);
-    if (!errors.isEmpty()) {
-      const messages = errors
-        .array()
-        .map((error) => `${error.msg}: ${error.param}`)
-        .join(', ');
-      throw new CustomError(messages, 400);
-    }
-    const { password } = req.body;
-    req.body.password = bcrypt.hashSync(password, salt);
+  const errors = validationResult(req.body);
 
+  if (!errors.isEmpty()) {
+    const messages = errors
+      .array()
+      .map((error) => `${error.msg}: ${error.param}`)
+      .join(', ');
+    throw new CustomError(messages, 400);
+  }
+  try {
+    const { password, email } = req.body;
+    req.body.password = bcrypt.hashSync(password, salt);
+    if (!EmailValidator.validate(email)) {
+      throw new CustomError('email not valid', 400);
+    }
     const result = await postUser(req.body);
     if (result) {
       res.json({

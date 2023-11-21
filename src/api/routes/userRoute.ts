@@ -10,13 +10,19 @@ import {
   userPutCurrent
 } from '../controllers/userController';
 import passport from 'passport';
+import { body } from 'express-validator';
 
 const router = express.Router();
 
 router
   .route('/')
   .get(userListGet)
-  .post(userPost)
+  .post(
+    body('email').isEmail(),
+    body('password').isString().notEmpty().escape(),
+    body('username').isString().notEmpty().escape(),
+    userPost
+  )
   .put(passport.authenticate('jwt', { session: false }), userPutCurrent)
   .delete(passport.authenticate('jwt', { session: false }), userDeleteCurrent);
 

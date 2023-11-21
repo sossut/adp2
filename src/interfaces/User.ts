@@ -2,7 +2,7 @@ import { RowDataPacket } from 'mysql2';
 
 interface User {
   id: number;
-  user_name: string;
+  username: string;
   email: string;
   password: string;
   role: 'superadmin' | 'admin' | 'user';
