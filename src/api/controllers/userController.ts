@@ -17,6 +17,9 @@ const salt = bcrypt.genSaltSync(12);
 
 const userListGet = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if ((req.user as User).role !== 'admin') {
+      throw new CustomError('Unauthorized', 403);
+    }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const messages = errors
@@ -33,7 +36,31 @@ const userListGet = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const userGet = async (
-  req: Request<{ id: string }, {}, {}>,
+  req: Request<{ id: number }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if ((req.user as User).role !== 'admin') {
+      throw new CustomError('Unauthorized', 403);
+    }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
+    const user = await getUser(req.params.id);
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const userGetCurrent = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -44,9 +71,10 @@ const userGet = async (
         .array()
         .map((error) => `${error.msg}: ${error.param}`)
         .join(', ');
+
       throw new CustomError(messages, 400);
     }
-    const user = await getUser(req.params.id);
+    const user = await getUser((req.user as User).id);
     res.json(user);
   } catch (error) {
     next(error);
@@ -199,6 +227,7 @@ const checkToken = (req: Request, res: Response, next: NextFunction) => {
 export {
   userListGet,
   userGet,
+  userGetCurrent,
   userPost,
   userPut,
   userPutCurrent,

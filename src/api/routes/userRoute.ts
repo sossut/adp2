@@ -4,6 +4,7 @@ import {
   userDelete,
   userDeleteCurrent,
   userGet,
+  userGetCurrent,
   userListGet,
   userPost,
   userPut,
@@ -16,7 +17,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(userListGet)
+  .get(passport.authenticate('jwt', { session: false }), userListGet)
   .post(
     body('email').isEmail(),
     body('password').isString().notEmpty().escape(),
@@ -31,10 +32,13 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   checkToken
 );
+router
+  .route('/current')
+  .get(passport.authenticate('jwt', { session: false }), userGetCurrent);
 
 router
   .route('/:id')
-  .get(userGet)
+  .get(passport.authenticate('jwt', { session: false }), userGet)
   .put(passport.authenticate('jwt', { session: false }), userPut)
   .delete(passport.authenticate('jwt', { session: false }), userDelete);
 
