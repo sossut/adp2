@@ -26,6 +26,22 @@ const getAllQuestions = async (): Promise<Question[]> => {
   // return rows;
 };
 
+const getAllQuestionsOnly = async (): Promise<Question[]> => {
+  const [rows] = await promisePool.execute<GetQuestion[]>(
+    'SELECT * FROM questions;'
+  );
+  if (rows.length === 0) {
+    throw new CustomError('No questions found', 404);
+  }
+  const questions: Question[] = rows.map((row) => ({
+    ...row,
+    // question: JSON.parse(row.question?.toString() || '{}'),
+    choices: JSON.parse(row.choices?.toString() || '{}')
+  }));
+  return questions;
+  // return rows;
+};
+
 const getAllActiveQuestions = async (): Promise<Question[]> => {
   const [rows] = await promisePool.execute<GetQuestion[]>(
     'SELECT * FROM questions_choices_summary_active;'
@@ -54,6 +70,18 @@ const getQuestion = async (id: string): Promise<Question> => {
           ON questions_choices.choice_id = choices.id
       WHERE questions.id = ?
       GROUP BY question_id;`,
+    [id]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('No questions found', 404);
+  }
+  return rows[0];
+};
+
+const getQuestionOnly = async (id: string): Promise<Question> => {
+  const [rows] = await promisePool.execute<GetQuestion[]>(
+    `SELECT * FROM questions
+      WHERE questions.id = ?;`,
     [id]
   );
   if (rows.length === 0) {
@@ -104,6 +132,8 @@ const deleteQuestion = async (id: number) => {
 export {
   getAllQuestions,
   getAllActiveQuestions,
+  getAllQuestionsOnly,
+  getQuestionOnly,
   getQuestion,
   postQuestion,
   putQuestion,

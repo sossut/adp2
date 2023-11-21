@@ -17,7 +17,7 @@ router
   .get(questionListGet)
   .post(
     passport.authenticate('jwt', { session: false }),
-    body('question_order').isNumeric().notEmpty().escape(),
+    body('question_order').isNumeric().optional().escape(),
     body('question').isString().notEmpty().escape(),
     body('weight').isNumeric().notEmpty().escape(),
     body('section_id').isNumeric().notEmpty().escape(),

@@ -5,7 +5,9 @@ import {
   putQuestion,
   getAllQuestions,
   getQuestion,
-  getAllActiveQuestions
+  getAllActiveQuestions,
+  getQuestionOnly,
+  getAllQuestionsOnly
 } from '../models/questionModel';
 import { Request, Response, NextFunction } from 'express';
 import CustomError from '../../classes/CustomError';
@@ -113,6 +115,32 @@ const questionPut = async (
   try {
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
+    }
+    try {
+      const question = await getQuestionOnly(req.params.id);
+      const oldQuestionOrder = question.question_order;
+      const newQuestionOrder = req.body.question_order;
+      const questions = await getAllQuestionsOnly();
+
+      if (newQuestionOrder < oldQuestionOrder) {
+        for (let i = newQuestionOrder - 1; i < oldQuestionOrder - 1; i++) {
+          const q = questions[i];
+          delete q.choices;
+          q.question_order += 1;
+
+          await putQuestion(q, q.id);
+        }
+      } else if (newQuestionOrder > oldQuestionOrder) {
+        for (let i = newQuestionOrder - 1; i >= oldQuestionOrder - 1; i--) {
+          const q = questions[i];
+          delete q.choices;
+          q.question_order -= 1;
+
+          await putQuestion(q, q.id);
+        }
+      }
+    } catch (error) {
+      next(error);
     }
 
     const choices = req.body.choices as PutQuestionChoice[];
