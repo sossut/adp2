@@ -24,6 +24,28 @@ const getAddress = async (id: string): Promise<GetAddress> => {
   return rows[0];
 };
 
+const getAddressByPostcodeAndStreetAndNumber = async (
+  postcode: string,
+  street: string,
+  number: string
+): Promise<GetAddress> => {
+  const [rows] = await promisePool.execute<GetAddress[]>(
+    `SELECT addresses.id, number, street_id FROM addresses
+    JOIN streets
+    ON addresses.street_id = streets.id
+    JOIN postcodes
+    ON streets.postcode_id = postcodes.id
+    WHERE postcodes.code = ?
+    AND streets.name = ?
+    AND number = ?`,
+    [postcode, street, number]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('No addresses found', 404);
+  }
+  return rows[0];
+};
+
 const postAddress = async (address: PostAddress) => {
   const [headers] = await promisePool.execute<ResultSetHeader>(
     'INSERT INTO addresses (number, street_id) VALUES (?, ?);',
@@ -58,4 +80,11 @@ const deleteAddress = async (id: number) => {
   return headers.affectedRows;
 };
 
-export { getAllAddresses, getAddress, postAddress, putAddress, deleteAddress };
+export {
+  getAllAddresses,
+  getAddress,
+  getAddressByPostcodeAndStreetAndNumber,
+  postAddress,
+  putAddress,
+  deleteAddress
+};

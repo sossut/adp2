@@ -15,7 +15,10 @@ import { HousingCompany } from '../../interfaces/HousingCompany';
 import CustomError from '../../classes/CustomError';
 import MessageResponse from '../../interfaces/MessageResponse';
 import { User } from '../../interfaces/User';
-import { postAddress } from '../models/addressModel';
+import {
+  getAddressByPostcodeAndStreetAndNumber,
+  postAddress
+} from '../models/addressModel';
 import { getCityIdByName, postCity } from '../models/cityModel';
 import { getPostcodeIdByCode, postPostcode } from '../models/postcodeModel';
 import {
@@ -279,10 +282,23 @@ const housingCompanyPost = async (
       });
     }
 
-    const address = await postAddress({
-      number: req.body.address_number,
-      street_id: street
-    });
+    let address;
+    try {
+      address = await getAddressByPostcodeAndStreetAndNumber(
+        req.body.postcode,
+        req.body.street_name,
+        req.body.address_number
+      );
+      console.log(address.id);
+    } catch (error) {}
+    if (!address) {
+      address = await postAddress({
+        number: req.body.address_number,
+        street_id: street
+      });
+    } else {
+      address = address.id;
+    }
     const result = await postHousingCompany({
       name: req.body.name,
       apartment_count: req.body.apartment_count,
