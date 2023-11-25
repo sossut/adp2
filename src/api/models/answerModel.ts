@@ -84,6 +84,145 @@ const getAnswersBySurvey = async (
   return rows;
 };
 
+const getAnswersByPostcode = async (
+  userID: number,
+  role: string,
+  postcode: string
+): Promise<Answer[]> => {
+  let sql = `SELECT answers.id, question_id, answer, survey_id, 
+    JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
+    JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
+    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
+   FROM answers
+    JOIN questions
+    ON answers.question_id = questions.id
+    JOIN surveys
+    ON answers.survey_id = surveys.id
+    JOIN users
+    ON surveys.user_id = users.id
+    JOIN housing_companies
+    ON surveys.housing_company_id = housing_companies.id
+    JOIN addresses
+    ON housing_companies.address_id = addresses.id
+    JOIN streets
+    ON addresses.street_id = streets.id
+    JOIN postcodes
+    ON streets.postcode_id = postcodes.id
+    WHERE postcodes.code = ? AND users.id = ?;`;
+  let params = [postcode, userID];
+  if (role === 'admin') {
+    sql = `SELECT answers.id, question_id, answer, survey_id, 
+    JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
+    JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
+    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
+    FROM answers
+    JOIN questions
+    ON answers.question_id = questions.id
+    JOIN surveys
+    ON answers.survey_id = surveys.id
+    JOIN users
+    ON surveys.user_id = users.id
+    JOIN housing_companies
+    ON surveys.housing_company_id = housing_companies.id
+    JOIN addresses
+    ON housing_companies.address_id = addresses.id
+    JOIN streets
+    ON addresses.street_id = streets.id
+    JOIN postcodes
+    ON streets.postcode_id = postcodes.id
+    WHERE postcodes.code = ?;`;
+    params = [postcode];
+  }
+  const format = promisePool.format(sql, params);
+  const [rows] = await promisePool.execute<GetAnswer[]>(format);
+  if (rows.length === 0) {
+    throw new CustomError('No answers found', 404);
+  }
+  // const answers: Answer[] = rows.map((row) => ({
+  //   ...row,
+  //   question: JSON.parse(row.question?.toString() || '{}'),
+  //   survey: JSON.parse(row.survey?.toString() || '{}'),
+  //   user: JSON.parse(row.user?.toString() || '{}'),
+  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  // }));
+  // return answers;
+  return rows;
+};
+
+const getAnswersByCity = async (
+  userID: number,
+  role: string,
+  city: string
+): Promise<Answer[]> => {
+  console.log('city', city);
+  let sql = `SELECT answers.id, question_id, answer, survey_id,
+    JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
+    JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
+    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
+   FROM answers
+    JOIN questions
+    ON answers.question_id = questions.id
+    JOIN surveys
+    ON answers.survey_id = surveys.id
+    JOIN users
+    ON surveys.user_id = users.id
+    JOIN housing_companies
+    ON surveys.housing_company_id = housing_companies.id
+    JOIN addresses
+    ON housing_companies.address_id = addresses.id
+    JOIN streets
+    ON addresses.street_id = streets.id
+    JOIN postcodes
+    ON streets.postcode_id = postcodes.id
+    JOIN cities
+    ON postcodes.city_id = cities.id
+    WHERE cities.name = ? AND users.id = ?;`;
+  let params = [city, userID];
+  if (role === 'admin') {
+    sql = `SELECT answers.id, question_id, answer, survey_id,
+    JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
+    JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
+    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
+    FROM answers
+    JOIN questions
+    ON answers.question_id = questions.id
+    JOIN surveys
+    ON answers.survey_id = surveys.id
+    JOIN users
+    ON surveys.user_id = users.id
+    JOIN housing_companies
+    ON surveys.housing_company_id = housing_companies.id
+    JOIN addresses
+    ON housing_companies.address_id = addresses.id
+    JOIN streets
+    ON addresses.street_id = streets.id
+    JOIN postcodes
+    ON streets.postcode_id = postcodes.id
+    JOIN cities
+    ON postcodes.city_id = cities.id
+    WHERE cities.name = ?;`;
+    params = [city];
+  }
+  const format = promisePool.format(sql, params);
+  const [rows] = await promisePool.execute<GetAnswer[]>(format);
+  if (rows.length === 0) {
+    throw new CustomError('No answers found', 404);
+  }
+  // const answers: Answer[] = rows.map((row) => ({
+  //   ...row,
+  //   question: JSON.parse(row.question?.toString() || '{}'),
+  //   survey: JSON.parse(row.survey?.toString() || '{}'),
+  //   user: JSON.parse(row.user?.toString() || '{}'),
+  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  // }));
+  // return answers;
+  return rows;
+};
+
 const postAnswer = async (answer: PostAnswer) => {
   const [headers] = await promisePool.execute<ResultSetHeader>(
     'INSERT INTO answers (answer, question_id, survey_id) VALUES (?, ?, ?);',
@@ -130,7 +269,7 @@ const deleteAllAnswersBySurvey = async (
   ON surveys.housing_company_id = housing_companies.id
   JOIN users
   ON surveys.user_id = users.id
-  WHERE survey_id = ? AND users.id = ?;`;
+  WHERE survey_id = ? AND users.id = ?`;
   let params = [surveyID, userID];
   if (role === 'admin') {
     sql = 'DELETE FROM answers WHERE survey_id = ?;';
@@ -148,6 +287,8 @@ export {
   getAllAnswers,
   getAnswer,
   getAnswersBySurvey,
+  getAnswersByPostcode,
+  getAnswersByCity,
   postAnswer,
   putAnswer,
   deleteAnswer,

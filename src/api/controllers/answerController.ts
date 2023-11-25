@@ -2,7 +2,9 @@ import { validationResult } from 'express-validator';
 import {
   getAnswersBySurvey,
   postAnswer,
-  deleteAnswer
+  deleteAnswer,
+  getAnswersByPostcode,
+  getAnswersByCity
 } from '../models/answerModel';
 import { Request, Response, NextFunction } from 'express';
 import CustomError from '../../classes/CustomError';
@@ -30,6 +32,54 @@ const answersBySurveyGet = async (
       id,
       (req.user as User).id,
       (req.user as User).role
+    );
+    res.json(answers);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const answersByPostcodeGet = async (
+  req: Request<{ id: string; code: string }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log(req.params.code);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const messages = errors
+      .array()
+      .map((error) => `${error.msg}: ${error.param}`)
+      .join(', ');
+    throw new CustomError(messages, 400);
+  }
+  try {
+    const answers = await getAnswersByPostcode(
+      (req.user as User).id,
+      (req.user as User).role,
+      req.params.code
+    );
+    res.json(answers);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const answersByCityGet = async (
+  req: Request<{ id: string; name: string }, {}, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const messages = errors.array().join(', ');
+    throw new CustomError(messages, 400);
+  }
+  try {
+    const answers = await getAnswersByCity(
+      (req.user as User).id,
+      (req.user as User).role,
+      req.params.name
     );
     res.json(answers);
   } catch (error) {
@@ -126,4 +176,11 @@ const answerDelete = async (
   }
 };
 
-export { answersBySurveyGet, answerPost, answerDelete, answerAllPost };
+export {
+  answersBySurveyGet,
+  answersByPostcodeGet,
+  answersByCityGet,
+  answerPost,
+  answerDelete,
+  answerAllPost
+};

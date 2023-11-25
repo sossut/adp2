@@ -3,7 +3,9 @@ import {
   answersBySurveyGet,
   answerPost,
   answerDelete,
-  answerAllPost
+  answerAllPost,
+  answersByPostcodeGet,
+  answersByCityGet
 } from '../controllers/answerController';
 import { body, param, check } from 'express-validator';
 import passport from 'passport';
@@ -26,6 +28,22 @@ router
     check('data.*.answer').isNumeric().notEmpty().escape(),
     check('survey_key').isString().notEmpty().escape(),
     answerAllPost
+  );
+
+router
+  .route('/postcode/:code')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    param('code').isString().notEmpty().escape(),
+    answersByPostcodeGet
+  );
+
+router
+  .route('/city/:name')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    param('name').isString().notEmpty().escape(),
+    answersByCityGet
   );
 
 router
