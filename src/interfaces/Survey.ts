@@ -12,6 +12,8 @@ interface Survey {
   user_id: User | number;
   survey_key: string;
   housing_company_id: HousingCompany | number;
+  questions_used?: string;
+  sections_used?: string;
 }
 
 interface GetSurvey extends RowDataPacket, Survey {}

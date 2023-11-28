@@ -4,6 +4,7 @@ import {
   sectionDelete,
   sectionGet,
   sectionListGet,
+  sectionListGetBySurveyKey,
   sectionPost,
   sectionPut
 } from '../controllers/sectionController';
@@ -25,6 +26,8 @@ router
     body('description').isString().optional().escape(),
     sectionPost
   );
+
+router.get('/survey/:key', sectionListGetBySurveyKey);
 
 router
   .route('/:id')

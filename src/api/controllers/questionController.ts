@@ -22,6 +22,7 @@ import {
   PostQuestionChoice,
   PutQuestionChoice
 } from '../../interfaces/QuestionChoice';
+import { getQuestionsUsedInSurveyBySurveyKey } from '../models/questionsUsedInSurveyModel';
 
 const questionListGet = async (
   req: Request,
@@ -44,6 +45,26 @@ const questionActiveListGet = async (
   try {
     const questions = await getAllActiveQuestions();
     res.json(questions);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const questionListBySurveyKeyGet = async (
+  req: Request<{ key: string }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const questions = await getQuestionsUsedInSurveyBySurveyKey(req.params.key);
+    const jsonQuestions = {
+      id: questions.id,
+      questions_used: JSON.parse(questions.questions_used.toString()),
+      survey_id: questions.survey_id,
+      survey: questions.survey
+    };
+
+    res.json(jsonQuestions);
   } catch (error) {
     next(error);
   }
@@ -200,6 +221,7 @@ const questionDelete = async (
 export {
   questionListGet,
   questionActiveListGet,
+  questionListBySurveyKeyGet,
   questionGet,
   questionPost,
   questionPut,

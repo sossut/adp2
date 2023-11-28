@@ -6,7 +6,8 @@ import {
   questionActiveListGet,
   questionListGet,
   questionPost,
-  questionPut
+  questionPut,
+  questionListBySurveyKeyGet
 } from '../controllers/questionController';
 import passport from 'passport';
 
@@ -25,6 +26,9 @@ router
     check('choices.*.choice_id').isNumeric().optional().escape(),
     questionPost
   );
+
+router.get('/survey/:key', questionListBySurveyKeyGet);
+
 router.route('/active').get(questionActiveListGet);
 
 router

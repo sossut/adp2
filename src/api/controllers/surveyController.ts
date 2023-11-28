@@ -20,6 +20,12 @@ import {
   getApartmentCountByHousingCompany
 } from '../models/housingCompanyModel';
 import { deleteResultBySurvey } from '../models/resultModel';
+import { getAllActiveQuestions } from '../models/questionModel';
+import { postQuestionsUsedInSurvey } from '../models/questionsUsedInSurveyModel';
+import { QuestionsUsedInSurvey } from '../../interfaces/QuestionsUsedInSurvey';
+import { getAllSections } from '../models/sectionModel';
+import { postSectionsUsedInSurvey } from '../models/sectionsUsedInSurveyModel';
+import { SectionsUsedInSurvey } from '../../interfaces/SectionsUsedInSurvey';
 // eslint-disable-next-line import/no-extraneous-dependencies
 var randomstring = require('randomstring');
 
@@ -127,6 +133,18 @@ const surveyPost = async (
     throw new CustomError(messages, 400);
   }
   try {
+    const activeQuestions = await getAllActiveQuestions();
+    if (activeQuestions.length === 0) {
+      throw new CustomError('No active questions', 400);
+    }
+    const sections = await getAllSections();
+    if (sections.length === 0) {
+      throw new CustomError('No sections', 400);
+    }
+    const jsonQuestions = JSON.stringify(activeQuestions);
+    req.body.questions_used = jsonQuestions;
+    const jsonSections = JSON.stringify(sections);
+    req.body.sections_used = jsonSections;
     let check = true;
     while (check) {
       const key = randomstring.generate(12);
@@ -168,7 +186,19 @@ const surveyPost = async (
         message: 'survey added',
         id: result
       };
-      res.json(message);
+      const questionsUsed = {
+        questions_used: jsonQuestions,
+        survey_id: result
+      } as QuestionsUsedInSurvey;
+      const sectionsUsed = {
+        sections_used: jsonSections,
+        survey_id: result
+      } as SectionsUsedInSurvey;
+      const result2 = await postQuestionsUsedInSurvey(questionsUsed);
+      const result3 = await postSectionsUsedInSurvey(sectionsUsed);
+      if (result2 && result3) {
+        res.json(message);
+      }
     }
   } catch (error) {
     next(error);

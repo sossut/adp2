@@ -10,6 +10,7 @@ import { Request, Response, NextFunction } from 'express';
 import CustomError from '../../classes/CustomError';
 import { PostSection } from '../../interfaces/Section';
 import { User } from '../../interfaces/User';
+import { getSectionsUsedInSurveyBySurveyKey } from '../models/sectionsUsedInSurveyModel';
 
 const sectionGet = async (
   req: Request<{ id: string }, {}, {}>,
@@ -32,6 +33,20 @@ const sectionListGet = async (
   try {
     const questions = await getAllSections();
     res.json(questions);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const sectionListGetBySurveyKey = async (
+  req: Request<{ key: string }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const sections = await getSectionsUsedInSurveyBySurveyKey(req.params.key);
+    const jsonSections = JSON.parse(sections.sections_used.toString());
+    res.json(jsonSections);
   } catch (error) {
     next(error);
   }
@@ -121,4 +136,11 @@ const sectionDelete = async (
   }
 };
 
-export { sectionGet, sectionListGet, sectionPost, sectionPut, sectionDelete };
+export {
+  sectionGet,
+  sectionListGet,
+  sectionPost,
+  sectionPut,
+  sectionDelete,
+  sectionListGetBySurveyKey
+};
