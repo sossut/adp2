@@ -4,7 +4,8 @@ import {
   postAnswer,
   deleteAnswer,
   getAnswersByPostcode,
-  getAnswersByCity
+  getAnswersByCity,
+  checkAnswersBySurvey
 } from '../models/answerModel';
 import { Request, Response, NextFunction } from 'express';
 import CustomError from '../../classes/CustomError';
@@ -12,6 +13,12 @@ import { PostAnswer } from '../../interfaces/Answer';
 import { User } from '../../interfaces/User';
 import { getSurveyByKey } from '../models/surveyModel';
 import MessageResponse from '../../interfaces/MessageResponse';
+import {
+  addAnswerCount,
+  changeResultSummary,
+  getResultAnswerCount
+} from '../models/resultModel';
+import { getResultSummaryByValues } from '../models/resultSummaryModel';
 
 const answersBySurveyGet = async (
   req: Request<{ id: string }, {}, {}>,
@@ -145,7 +152,76 @@ const answerAllPost = async (
       message: 'Answers added',
       id: surveyId.id
     };
-    res.json(message);
+    await addAnswerCount(surveyId.id);
+    const answerCount = await getResultAnswerCount(surveyId.id);
+
+    //TÄHÄN MIN_RESPONSES
+    if (answerCount < 5) {
+      res.json(message);
+    } else {
+      const answersBySurvey = await checkAnswersBySurvey(surveyId.id);
+
+      let section1Points = 0;
+      let section2Points = 0;
+      let section3Points = 0;
+
+      const section1 = answersBySurvey.filter((answer) => {
+        if (answer.section_id === 1) {
+          section1Points += answer.answer;
+          return answer.section_id === 1;
+        }
+      });
+      const section2 = answersBySurvey.filter((answer) => {
+        if (answer.section_id === 2) {
+          section2Points += answer.answer;
+          return answer.section_id === 2;
+        }
+      });
+      const section3 = answersBySurvey.filter((answer) => {
+        if (answer.section_id === 3) {
+          section3Points += answer.answer;
+          return answer.section_id === 3;
+        }
+      });
+
+      const section1Result = section1Points / section1.length;
+      const section2Result = section2Points / section2.length;
+      const section3Result = section3Points / section3.length;
+
+      console.log('Points Section 1', section1Points);
+      console.log('Points Section 2', section2Points);
+      console.log('Points Section 3', section3Points);
+
+      console.log(section1Result);
+      console.log(section2Result);
+      console.log(section3Result);
+
+      const valueCheck = (value: number) => {
+        if (value > 0.5) {
+          return 'positive';
+        } else if (value <= 0.5 && value > 0) {
+          return 'even';
+        } else if (value <= 0) {
+          return 'negative';
+        }
+      };
+
+      const section1ResultValue = valueCheck(section1Result) as String;
+      const section2ResultValue = valueCheck(section2Result) as String;
+      const section3ResultValue = valueCheck(section3Result) as String;
+
+      const resultSummaryId = await getResultSummaryByValues(
+        section1ResultValue.toString(),
+        section2ResultValue.toString(),
+        section3ResultValue.toString()
+      );
+      if (!resultSummaryId) {
+        throw new CustomError('Result summary not found', 404);
+      }
+      await changeResultSummary(resultSummaryId.id, surveyId.id);
+
+      res.json(message);
+    }
   } catch (error) {
     next(error);
   }

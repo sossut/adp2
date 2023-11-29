@@ -10,6 +10,7 @@ interface Answer {
   survey_key?: string;
   data?: Array<{ question_id: number; answer: number; survey_id: number }>;
   // data: any;
+  section_id?: number;
 }
 
 interface GetAnswer extends RowDataPacket, Answer {}

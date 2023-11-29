@@ -35,7 +35,7 @@ const getAnswersBySurvey = async (
   role: string
 ): Promise<Answer[]> => {
   let sql = `SELECT answers.id, question_id, answer, survey_id, 
-    JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
+    JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight, 'section_id', questions.section_id) AS question,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
@@ -52,7 +52,7 @@ const getAnswersBySurvey = async (
   let params = [surveyID, userID];
   if (role === 'admin') {
     sql = `SELECT answers.id, question_id, answer, survey_id, 
-    JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
+    JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight, 'section_id', questions.section_id) AS question,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
@@ -84,6 +84,21 @@ const getAnswersBySurvey = async (
   return rows;
 };
 
+const checkAnswersBySurvey = async (surveyID: number): Promise<Answer[]> => {
+  const [rows] = await promisePool.execute<GetAnswer[]>(
+    `SELECT answers.id, question_id, answer, survey_id, questions.section_id
+    FROM answers
+    JOIN questions
+    ON answers.question_id = questions.id
+    WHERE survey_id = ?;`,
+    [surveyID]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('No answers found', 404);
+  }
+  return rows;
+};
+
 const getAnswersByPostcode = async (
   userID: number,
   role: string,
@@ -94,7 +109,7 @@ const getAnswersByPostcode = async (
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
-   FROM answers
+    FROM answers
     JOIN questions
     ON answers.question_id = questions.id
     JOIN surveys
@@ -287,6 +302,7 @@ export {
   getAllAnswers,
   getAnswer,
   getAnswersBySurvey,
+  checkAnswersBySurvey,
   getAnswersByPostcode,
   getAnswersByCity,
   postAnswer,

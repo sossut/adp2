@@ -19,13 +19,14 @@ import {
   checkIfHousingCompanyBelongsToUser,
   getApartmentCountByHousingCompany
 } from '../models/housingCompanyModel';
-import { deleteResultBySurvey } from '../models/resultModel';
+import { deleteResultBySurvey, postResult } from '../models/resultModel';
 import { getAllActiveQuestions } from '../models/questionModel';
 import { postQuestionsUsedInSurvey } from '../models/questionsUsedInSurveyModel';
 import { QuestionsUsedInSurvey } from '../../interfaces/QuestionsUsedInSurvey';
 import { getAllSections } from '../models/sectionModel';
 import { postSectionsUsedInSurvey } from '../models/sectionsUsedInSurveyModel';
 import { SectionsUsedInSurvey } from '../../interfaces/SectionsUsedInSurvey';
+import { PostResult } from '../../interfaces/Result';
 // eslint-disable-next-line import/no-extraneous-dependencies
 var randomstring = require('randomstring');
 
@@ -196,7 +197,15 @@ const surveyPost = async (
       } as SectionsUsedInSurvey;
       const result2 = await postQuestionsUsedInSurvey(questionsUsed);
       const result3 = await postSectionsUsedInSurvey(sectionsUsed);
-      if (result2 && result3) {
+      const resultData = {
+        survey_id: result,
+        date_time: new Date(),
+        filename: 'jotain',
+        result_summary_id: 1,
+        answer_count: 0
+      } as PostResult;
+      const resultResult = await postResult(resultData);
+      if (result2 && result3 && resultResult) {
         res.json(message);
       }
     }
