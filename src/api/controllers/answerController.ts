@@ -188,14 +188,7 @@ const answerAllPost = async (
       const section2Result = section2Points / section2.length;
       const section3Result = section3Points / section3.length;
 
-      console.log('Points Section 1', section1Points);
-      console.log('Points Section 2', section2Points);
-      console.log('Points Section 3', section3Points);
-
-      console.log(section1Result);
-      console.log(section2Result);
-      console.log(section3Result);
-
+      //KYSY TOPILTA MIKSKÄ NÄÄ VOIS LAITTAA
       const valueCheck = (value: number) => {
         if (value > 0.5) {
           return 'positive';
