@@ -60,10 +60,15 @@ const resultGet = async (
       (req.user as User).id,
       (req.user as User).role
     );
-    const parsed = JSON.parse(result.result_summary);
-    const sectionOneResult = parsed.section_one;
-    const sectionTwoResult = parsed.section_two;
-    const sectionThreeResult = parsed.section_three;
+    //localhostille
+    // const parsed = JSON.parse(result.result_summary);
+    // const sectionOneResult = parsed.section_one;
+    // const sectionTwoResult = parsed.section_two;
+    // const sectionThreeResult = parsed.section_three;
+
+    const sectionOneResult = result.result_summary.section_one;
+    const sectionTwoResult = result.result_summary.section_two;
+    const sectionThreeResult = result.result_summary.section_three;
 
     const sections = await getSectionsUsedInSurveyBySurveyId(
       result.survey_id as number

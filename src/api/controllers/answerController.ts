@@ -11,7 +11,7 @@ import CustomError from '../../classes/CustomError';
 import { PostAnswer } from '../../interfaces/Answer';
 import { User } from '../../interfaces/User';
 import { getSurveyByKey } from '../models/surveyModel';
-import MessageResponse from '../../interfaces/MessageResponse';
+
 import { addAnswerCount } from '../models/resultModel';
 import { getSurveyResultsAndCount } from '../../utils/utility';
 
