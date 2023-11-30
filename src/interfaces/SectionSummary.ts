@@ -3,9 +3,8 @@ import { Section } from './Section';
 
 interface SectionSummary {
   id: number;
-  positive: string;
-  even: string;
-  negative: string;
+  result: string;
+  summary: string;
   section_id: number | Section;
 }
 

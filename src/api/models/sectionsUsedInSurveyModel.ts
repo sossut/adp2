@@ -36,7 +36,7 @@ const getAllSectionsUsedInSurveys = async (): Promise<
 };
 
 const getSectionsUsedInSurvey = async (
-  id: string
+  id: number
 ): Promise<SectionsUsedInSurvey> => {
   const [rows] = await promisePool.execute<GetSectionsUsedInSurvey[]>(
     `SELECT sections_used_in_surveys.id, sections_used_in_survey.sections_used,
@@ -49,6 +49,21 @@ const getSectionsUsedInSurvey = async (
     ON sections_used_in_survey.survey_id = surveys.id;
     WHERE sections_used_in_surveys.id = ?`,
     [id]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('No sections used in surveys found', 404);
+  }
+  return rows[0];
+};
+
+const getSectionsUsedInSurveyBySurveyId = async (
+  survey_id: number
+): Promise<SectionsUsedInSurvey> => {
+  const [rows] = await promisePool.execute<GetSectionsUsedInSurvey[]>(
+    `SELECT sections_used_in_survey.sections_used
+    FROM sections_used_in_survey
+    WHERE sections_used_in_survey.survey_id = ?;`,
+    [survey_id]
   );
   if (rows.length === 0) {
     throw new CustomError('No sections used in surveys found', 404);
@@ -112,6 +127,7 @@ export {
   getAllSectionsUsedInSurveys,
   getSectionsUsedInSurvey,
   getSectionsUsedInSurveyBySurveyKey,
+  getSectionsUsedInSurveyBySurveyId,
   postSectionsUsedInSurvey,
   putSectionsUsedInSurvey,
   deleteSectionsUsedInSurvey

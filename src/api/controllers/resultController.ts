@@ -13,6 +13,9 @@ import { PostResult } from '../../interfaces/Result';
 import MessageResponse from '../../interfaces/MessageResponse';
 import { User } from '../../interfaces/User';
 import { checkIfSurveyBelongsToUser } from '../models/surveyModel';
+import { getSectionSummaryBySectionIdAndResult } from '../models/sectionSummaryModel';
+
+import { getSectionsUsedInSurveyBySurveyId } from '../models/sectionsUsedInSurveyModel';
 
 const resultListGet = async (
   req: Request,
@@ -52,8 +55,46 @@ const resultGet = async (
     throw new CustomError(messages, 400);
   }
   try {
-    const result = await getResult(req.params.id);
-    res.json(result);
+    const result = await getResult(
+      req.params.id,
+      (req.user as User).id,
+      (req.user as User).role
+    );
+    const parsed = JSON.parse(result.result_summary);
+    const sectionOneResult = parsed.section_one;
+    const sectionTwoResult = parsed.section_two;
+    const sectionThreeResult = parsed.section_three;
+
+    const sections = await getSectionsUsedInSurveyBySurveyId(
+      result.survey_id as number
+    );
+    const sectionParsed = JSON.parse(sections.sections_used);
+
+    const sectionIDs = sectionParsed.map((section: any) => section.id);
+
+    const sectionOneSummary = await getSectionSummaryBySectionIdAndResult(
+      sectionIDs[0],
+      sectionOneResult as string
+    );
+    const sectionTwoSummary = await getSectionSummaryBySectionIdAndResult(
+      sectionIDs[1],
+      sectionTwoResult
+    );
+    const sectionThreeSummary = await getSectionSummaryBySectionIdAndResult(
+      sectionIDs[2],
+      sectionThreeResult
+    );
+
+    const response = {
+      result: result,
+      section_summary: {
+        section_one: sectionOneSummary,
+        section_two: sectionTwoSummary,
+        section_three: sectionThreeSummary
+      }
+    };
+
+    res.json(response);
   } catch (error) {
     next(error);
   }
