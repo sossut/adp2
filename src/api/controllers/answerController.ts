@@ -12,7 +12,7 @@ import { PostAnswer } from '../../interfaces/Answer';
 import { User } from '../../interfaces/User';
 import { getSurveyByKey } from '../models/surveyModel';
 
-import { addAnswerCount } from '../models/resultModel';
+import { addAnswerCount, getResultAnswerCount } from '../models/resultModel';
 import { getSurveyResultsAndCount } from '../../utils/utility';
 
 const answersBySurveyGet = async (
@@ -143,7 +143,8 @@ const answerAllPost = async (
       element.survey_id = surveyId.id;
       await postAnswer(element);
     });
-
+    const answerCount = await getResultAnswerCount(surveyId.id);
+    console.log(answerCount);
     await addAnswerCount(surveyId.id);
 
     await getSurveyResultsAndCount(surveyId.id);
