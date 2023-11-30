@@ -143,8 +143,7 @@ const answerAllPost = async (
       element.survey_id = surveyId.id;
       await postAnswer(element);
     });
-    const answerCount = await getResultAnswerCount(surveyId.id);
-    console.log(answerCount);
+    await getResultAnswerCount(surveyId.id);
     await addAnswerCount(surveyId.id);
 
     await getSurveyResultsAndCount(surveyId.id);
@@ -154,7 +153,6 @@ const answerAllPost = async (
       key: surveyId.survey_key,
       answers: data
     };
-    console.log(response);
     res.json(response);
   } catch (error) {
     next(error);
