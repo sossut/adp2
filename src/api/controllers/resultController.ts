@@ -70,6 +70,10 @@ const resultGet = async (
     const sectionTwoResult = result.result_summary.section_two;
     const sectionThreeResult = result.result_summary.section_three;
 
+    console.log(sectionOneResult);
+    console.log(sectionTwoResult);
+    console.log(sectionThreeResult);
+
     const sections = await getSectionsUsedInSurveyBySurveyId(
       result.survey_id as number
     );
