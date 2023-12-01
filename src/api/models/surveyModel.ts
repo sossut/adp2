@@ -15,7 +15,7 @@ const getAllSurveys = async (
   userId: number,
   role: string
 ): Promise<Survey[]> => {
-  let sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+  let sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
     FROM surveys
@@ -27,7 +27,7 @@ const getAllSurveys = async (
     ;`;
   let params = [userId];
   if (role === 'admin') {
-    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time,
       JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
       JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
       FROM surveys
@@ -48,7 +48,7 @@ const getAllSurveys = async (
 
 const getSurvey = async (id: number): Promise<Survey> => {
   const [rows] = await promisePool.execute<GetSurvey[]>(
-    `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+    `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
     FROM surveys
@@ -109,7 +109,7 @@ const putSurvey = async (
 
 const getSurveyByKey = async (key: string): Promise<Survey> => {
   const [rows] = await promisePool.execute<GetSurvey[]>(
-    `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+    `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
     FROM surveys
@@ -128,7 +128,7 @@ const getSurveyByKey = async (key: string): Promise<Survey> => {
 
 const checkIfSurveyKeyExists = async (key: string): Promise<boolean> => {
   const [rows] = await promisePool.execute<GetSurvey[]>(
-    `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+    `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
     FROM surveys
@@ -169,7 +169,7 @@ const getSurveysByHousingCompany = async (
   userID: number,
   role: string
 ): Promise<Survey[]> => {
-  let sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+  let sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time,
       JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
       JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
       FROM surveys
@@ -181,7 +181,7 @@ const getSurveysByHousingCompany = async (
       ;`;
   let params = [housingCompanyID, userID];
   if (role === 'admin') {
-    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time
         JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
         JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
         FROM surveys
