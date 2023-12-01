@@ -14,9 +14,9 @@ import { getSurveyByKey } from '../models/surveyModel';
 
 import { addAnswerCount, getResultAnswerCount } from '../models/resultModel';
 import { getSurveyResultsAndCount } from '../../utils/utility';
-import { getResultSummaryByValues } from '../models/resultSummaryModel';
-import { getSectionsUsedInSurveyBySurveyId } from '../models/sectionsUsedInSurveyModel';
-import { getSectionSummaryBySectionIdAndResult } from '../models/sectionSummaryModel';
+
+import { getQuestionCategorySummaryByCategoryIdAndResult } from '../models/questionCategorySummaryModel';
+import { getUserSectionSummaryBySectionIdAndResult } from '../models/userSectionSummaryModel';
 
 const answersBySurveyGet = async (
   req: Request<{ id: string }, {}, {}>,
@@ -150,6 +150,156 @@ const answerAllPost = async (
     await addAnswerCount(survey.id);
 
     await getSurveyResultsAndCount(survey.id);
+    let categoryOnePoints = 0;
+    let categoryTwoPoints = 0;
+    let categoryThreePoints = 0;
+    let categoryFourPoints = 0;
+    let categoryFivePoints = 0;
+    let categorySixPoints = 0;
+    let categorySevenPoints = 0;
+    let categoryEightPoints = 0;
+    let categoryNinePoints = 0;
+    let categoryTenPoints = 0;
+
+    const categoryOne = [];
+    const categoryTwo = [];
+    const categoryThree = [];
+    const categoryFour = [];
+    const categoryFive = [];
+    const categorySix = [];
+    const categorySeven = [];
+    const categoryEight = [];
+    const categoryNine = [];
+    const categoryTen = [];
+    data.forEach((answer) => {
+      switch (answer.question_category_id as unknown as string) {
+        case '1':
+          categoryOnePoints += parseInt(answer.answer as unknown as string);
+          categoryOne.push(answer);
+          break;
+        case '2':
+          categoryTwoPoints += parseInt(answer.answer as unknown as string);
+          categoryTwo.push(answer);
+          break;
+        case '3':
+          categoryThreePoints += parseInt(answer.answer as unknown as string);
+          categoryThree.push(answer);
+          break;
+        case '4':
+          categoryFourPoints += parseInt(answer.answer as unknown as string);
+          categoryFour.push(answer);
+          break;
+        case '5':
+          categoryFivePoints += parseInt(answer.answer as unknown as string);
+          categoryFive.push(answer);
+          break;
+        case '6':
+          categorySixPoints += parseInt(answer.answer as unknown as string);
+          categorySix.push(answer);
+          break;
+        case '7':
+          categorySevenPoints += parseInt(answer.answer as unknown as string);
+          categorySeven.push(answer);
+          break;
+        case '8':
+          categoryEightPoints += parseInt(answer.answer as unknown as string);
+          categoryEight.push(answer);
+          break;
+        case '9':
+          categoryNinePoints += parseInt(answer.answer as unknown as string);
+          categoryNine.push(answer);
+          break;
+        case '10':
+          categoryTenPoints += parseInt(answer.answer as unknown as string);
+          categoryTen.push(answer);
+          break;
+      }
+    });
+
+    const categoryOneResult = categoryOnePoints / categoryOne.length;
+    const categoryTwoResult = categoryTwoPoints / categoryTwo.length;
+    const categoryThreeResult = categoryThreePoints / categoryThree.length;
+    const categoryFourResult = categoryFourPoints / categoryFour.length;
+    const categoryFiveResult = categoryFivePoints / categoryFive.length;
+    const categorySixResult = categorySixPoints / categorySix.length;
+    const categorySevenResult = categorySevenPoints / categorySeven.length;
+    const categoryEightResult = categoryEightPoints / categoryEight.length;
+    const categoryNineResult = categoryNinePoints / categoryNine.length;
+    const categoryTenResult = categoryTenPoints / categoryTen.length;
+
+    //KYSY TOPILTA MIKSKÄ NÄÄ VOIS LAITTAA
+    const valueCheck = (value: number) => {
+      if (value > 0.4) {
+        return 'positive';
+      } else if (value <= 0.4 && value > -0.2) {
+        return 'even';
+      } else if (value <= -0.2) {
+        return 'negative';
+      }
+    };
+
+    const categoryOneResultValue = valueCheck(categoryOneResult) as String;
+    const categoryTwoResultValue = valueCheck(categoryTwoResult) as String;
+    const categoryThreeResultValue = valueCheck(categoryThreeResult) as String;
+    const categoryFourResultValue = valueCheck(categoryFourResult) as String;
+    const categoryFiveResultValue = valueCheck(categoryFiveResult) as String;
+    const categorySixResultValue = valueCheck(categorySixResult) as String;
+    const categorySevenResultValue = valueCheck(categorySevenResult) as String;
+    const categoryEightResultValue = valueCheck(categoryEightResult) as String;
+    const categoryNineResultValue = valueCheck(categoryNineResult) as String;
+    const categoryTenResultValue = valueCheck(categoryTenResult) as String;
+
+    const catetegoryOneSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        1,
+        categoryOneResultValue.toString()
+      );
+    const catetegoryTwoSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        2,
+        categoryTwoResultValue.toString()
+      );
+    const catetegoryThreeSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        3,
+        categoryThreeResultValue.toString()
+      );
+    const catetegoryFourSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        4,
+        categoryFourResultValue.toString()
+      );
+    const catetegoryFiveSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        5,
+        categoryFiveResultValue.toString()
+      );
+    const catetegorySixSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        6,
+        categorySixResultValue.toString()
+      );
+    const catetegorySevenSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        7,
+        categorySevenResultValue.toString()
+      );
+    const catetegoryEightSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        8,
+        categoryEightResultValue.toString()
+      );
+    const catetegoryNineSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        9,
+        categoryNineResultValue.toString()
+      );
+    const catetegoryTenSummary =
+      await getQuestionCategorySummaryByCategoryIdAndResult(
+        10,
+        categoryTenResultValue.toString()
+      );
+
     try {
       let section1Points = 0;
       let section2Points = 0;
@@ -178,51 +328,25 @@ const answerAllPost = async (
       const section2Result = section2Points / section2.length;
       const section3Result = section3Points / section3.length;
 
-      //KYSY TOPILTA MIKSKÄ NÄÄ VOIS LAITTAA
-      const valueCheck = (value: number) => {
-        if (value > 0.5) {
-          return 'positive';
-        } else if (value <= 0.5 && value > 0) {
-          return 'even';
-        } else if (value <= 0) {
-          return 'negative';
-        }
-      };
-
       const section1ResultValue = valueCheck(section1Result) as String;
       const section2ResultValue = valueCheck(section2Result) as String;
       const section3ResultValue = valueCheck(section3Result) as String;
 
-      const resultSummary = await getResultSummaryByValues(
-        section1ResultValue.toString(),
-        section2ResultValue.toString(),
-        section3ResultValue.toString()
+      const sectionOneSummary = await getUserSectionSummaryBySectionIdAndResult(
+        1,
+        section1ResultValue.toString()
       );
-      console.log(resultSummary);
-      if (!resultSummary) {
-        throw new CustomError('Result summary not found', 404);
-      }
-      const sectionOneResult = resultSummary.section_one;
-      const sectionTwoResult = resultSummary.section_two;
-      const sectionThreeResult = resultSummary.section_three;
-      const sections = await getSectionsUsedInSurveyBySurveyId(survey.id);
 
-      const sectionParsed = JSON.parse(sections.sections_used);
+      const sectionTwoSummary = await getUserSectionSummaryBySectionIdAndResult(
+        2,
+        section2ResultValue.toString()
+      );
 
-      const sectionIDs = sectionParsed.map((section: any) => section.id);
-
-      const sectionOneSummary = await getSectionSummaryBySectionIdAndResult(
-        sectionIDs[0],
-        sectionOneResult as string
-      );
-      const sectionTwoSummary = await getSectionSummaryBySectionIdAndResult(
-        sectionIDs[1],
-        sectionTwoResult
-      );
-      const sectionThreeSummary = await getSectionSummaryBySectionIdAndResult(
-        sectionIDs[2],
-        sectionThreeResult
-      );
+      const sectionThreeSummary =
+        await getUserSectionSummaryBySectionIdAndResult(
+          3,
+          section3ResultValue.toString()
+        );
 
       const response = {
         message: 'Answers added',
@@ -230,10 +354,29 @@ const answerAllPost = async (
         key: survey.survey_key,
         answers: data,
         result: {
-          summary: resultSummary,
-          section_one: sectionOneSummary,
-          section_two: sectionTwoSummary,
-          section_three: sectionThreeSummary
+          section_summaries: {
+            section_one: sectionOneSummary,
+            section_two: sectionTwoSummary,
+            section_three: sectionThreeSummary
+          },
+          category_summaries: {
+            section_one: {
+              category_temerature: catetegoryOneSummary,
+              category_lighting: catetegoryTwoSummary,
+              category_airquality: catetegoryThreeSummary,
+              category_repairs_personal: catetegoryFourSummary,
+              category_upkeep_personal: catetegoryFiveSummary
+            },
+            section_two: {
+              category_energyefficiency: catetegorySixSummary,
+              category_participation: catetegorySevenSummary
+            },
+            section_three: {
+              category_upkeep_hc: catetegoryEightSummary,
+              category_economy: catetegoryNineSummary,
+              category_community: catetegoryTenSummary
+            }
+          }
         }
       };
       res.json(response);

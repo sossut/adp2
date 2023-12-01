@@ -1,6 +1,7 @@
 import { RowDataPacket } from 'mysql2';
 import { Section } from './Section';
 import { Choice } from './Choice';
+import { QuestionCategory } from './QuestionCategory';
 
 interface Question {
   id: number;
@@ -14,6 +15,7 @@ interface Question {
     question_id?: number | Question;
     choice_id: number | Choice;
   }>;
+  question_category_id: number | QuestionCategory;
 }
 
 interface GetQuestion extends RowDataPacket, Question {}

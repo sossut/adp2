@@ -1,6 +1,8 @@
 import { RowDataPacket } from 'mysql2';
 import { Question } from './Question';
 import { Survey } from './Survey';
+import { QuestionCategory } from './QuestionCategory';
+import { Section } from './Section';
 
 interface Answer {
   id: number;
@@ -10,7 +12,8 @@ interface Answer {
   survey_key?: string;
   data?: Array<{ question_id: number; answer: number; survey_id: number }>;
   // data: any;
-  section_id?: number;
+  section_id?: number | Section;
+  question_category_id?: number | QuestionCategory;
 }
 
 interface GetAnswer extends RowDataPacket, Answer {}

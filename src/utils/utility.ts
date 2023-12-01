@@ -42,11 +42,11 @@ const getSurveyResultsAndCount = async (surveyId: number) => {
 
     //KYSY TOPILTA MIKSKÄ NÄÄ VOIS LAITTAA
     const valueCheck = (value: number) => {
-      if (value > 0.5) {
+      if (value > 0.4) {
         return 'positive';
-      } else if (value <= 0.5 && value > 0) {
+      } else if (value <= 0.4 && value > -0.2) {
         return 'even';
-      } else if (value <= 0) {
+      } else if (value <= -0.2) {
         return 'negative';
       }
     };

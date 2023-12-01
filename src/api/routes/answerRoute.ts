@@ -27,6 +27,7 @@ router
     check('data.*.question_id').isNumeric().notEmpty().escape(),
     check('data.*.answer').isNumeric().notEmpty().escape(),
     check('data.*.section_id').isNumeric().notEmpty().escape(),
+    check('data.*.question_category_id').isNumeric().notEmpty().escape(),
     check('survey_key').isString().notEmpty().escape(),
     answerAllPost
   );
