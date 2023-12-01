@@ -11,9 +11,11 @@ import {
 import { deleteAllAnswersBySurvey } from './answerModel';
 import { deleteResultBySurvey } from './resultModel';
 
-const getAllSurveys = async (): Promise<Survey[]> => {
-  const [rows] = await promisePool.execute<GetSurvey[]>(
-    `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+const getAllSurveys = async (
+  userId: number,
+  role: string
+): Promise<Survey[]> => {
+  let sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
     FROM surveys
@@ -21,8 +23,23 @@ const getAllSurveys = async (): Promise<Survey[]> => {
     ON surveys.user_id = users.id
     JOIN housing_companies
     ON surveys.housing_company_id = housing_companies.id
-    `
-  );
+    WHERE users.id = ?
+    ;`;
+  let params = [userId];
+  if (role === 'admin') {
+    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id,
+      JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+      JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
+      FROM surveys
+      JOIN users
+      ON surveys.user_id = users.id
+      JOIN housing_companies
+      ON surveys.housing_company_id = housing_companies.id
+      ;`;
+    params = [];
+  }
+  const format = promisePool.format(sql, params);
+  const [rows] = await promisePool.execute<GetSurvey[]>(format);
   if (rows.length === 0) {
     throw new CustomError('No surveys found', 404);
   }

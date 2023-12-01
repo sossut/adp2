@@ -44,10 +44,10 @@ const surveyListGet = async (
     throw new CustomError(messages, 400);
   }
   try {
-    if ((req.user as User).role !== 'admin') {
-      throw new CustomError('Unauthorized', 401);
-    }
-    const surveys = await getAllSurveys();
+    const surveys = await getAllSurveys(
+      (req.user as User).id,
+      (req.user as User).role
+    );
     res.json(surveys);
   } catch (error) {
     next(error);

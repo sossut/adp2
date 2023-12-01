@@ -28,6 +28,17 @@ router
   );
 
 router
+  .route('/key/:key')
+  .get(param('key').isString().notEmpty().escape(), surveyGetByKey);
+
+router
+  .route('/housing-company/:id')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    param('id').isNumeric(),
+    surveyListByHousingCompanyGet
+  );
+router
   .route('/:id')
   .get(
     passport.authenticate('jwt', { session: false }),
@@ -43,18 +54,6 @@ router
     passport.authenticate('jwt', { session: false }),
     param('id').isNumeric(),
     surveyDelete
-  );
-
-router
-  .route('/key/:key')
-  .get(param('key').isString().notEmpty().escape(), surveyGetByKey);
-
-router
-  .route('/housing-company/:id')
-  .get(
-    passport.authenticate('jwt', { session: false }),
-    param('id').isNumeric(),
-    surveyListByHousingCompanyGet
   );
 
 export default router;
