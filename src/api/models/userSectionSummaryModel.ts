@@ -60,7 +60,6 @@ const getUserSectionSummaryBySectionIdAndResult = async (
   section_id: number,
   result: string
 ): Promise<GetUserSectionSummary> => {
-  console.log(section_id, result);
   const [rows] = await promisePool.execute<GetUserSectionSummary[]>(
     `SELECT * 
     FROM user_section_summaries

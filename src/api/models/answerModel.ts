@@ -171,7 +171,6 @@ const getAnswersByCity = async (
   role: string,
   city: string
 ): Promise<Answer[]> => {
-  console.log('city', city);
   let sql = `SELECT answers.id, question_id, answer, survey_id,
     JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,

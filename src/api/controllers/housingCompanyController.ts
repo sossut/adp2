@@ -289,7 +289,6 @@ const housingCompanyPost = async (
         req.body.street_name,
         req.body.address_number
       );
-      console.log(address.id);
     } catch (error) {}
     if (!address) {
       address = await postAddress({

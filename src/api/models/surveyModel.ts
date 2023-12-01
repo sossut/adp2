@@ -277,7 +277,7 @@ const deleteAllSurveysFromHousingCompany = async (
     userID,
     role
   );
-  console.log(surveys);
+
   for (const survey of surveys) {
     await deleteResultBySurvey(survey.id, userID, role);
     await deleteAllAnswersBySurvey(survey.id, userID, role);

@@ -49,7 +49,6 @@ const answersByPostcodeGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(req.params.code);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const messages = errors
@@ -108,7 +107,7 @@ const answerPost = async (
   }
   try {
     const surveyId = await getSurveyByKey(req.body.survey_key as string);
-    console.log(surveyId);
+
     if (!surveyId) {
       throw new CustomError('Survey not found', 404);
     }
@@ -160,7 +159,7 @@ const answerAllPost = async (
     let categoryEightPoints = 0;
     let categoryNinePoints = 0;
     let categoryTenPoints = 0;
-
+    let points = 0;
     const categoryOne = [];
     const categoryTwo = [];
     const categoryThree = [];
@@ -172,6 +171,7 @@ const answerAllPost = async (
     const categoryNine = [];
     const categoryTen = [];
     data.forEach((answer) => {
+      points += parseInt(answer.answer as unknown as string);
       switch (answer.question_category_id as unknown as string) {
         case '1':
           categoryOnePoints += parseInt(answer.answer as unknown as string);
@@ -237,7 +237,7 @@ const answerAllPost = async (
         return 'negative';
       }
     };
-
+    const pointsValue = valueCheck(points) as String;
     const categoryOneResultValue = valueCheck(categoryOneResult) as String;
     const categoryTwoResultValue = valueCheck(categoryTwoResult) as String;
     const categoryThreeResultValue = valueCheck(categoryThreeResult) as String;
@@ -354,6 +354,7 @@ const answerAllPost = async (
         key: survey.survey_key,
         answers: data,
         result: {
+          summary: pointsValue,
           section_summaries: {
             section_one: sectionOneSummary,
             section_two: sectionTwoSummary,

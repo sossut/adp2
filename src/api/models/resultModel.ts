@@ -129,7 +129,6 @@ const getResultAnswerCount = async (surveyId: number): Promise<number> => {
 };
 
 const postResult = async (result: PostResult) => {
-  console.log(result);
   const [headers] = await promisePool.execute<ResultSetHeader>(
     `INSERT INTO results (date_time, filename, survey_id, answer_count, result_summary_id)
     VALUES (?, ?, ?, ?, ?)`,
