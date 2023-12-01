@@ -45,7 +45,7 @@ const getResultSummaryByValues = async (
   section_three: string
 ): Promise<GetResultSummary> => {
   const [rows] = await promisePool.execute<GetResultSummary[]>(
-    `SELECT id 
+    `SELECT * 
     FROM result_summaries
     WHERE result_summaries.section_one = ?
     AND result_summaries.section_two = ?

@@ -54,6 +54,21 @@ const getQuestionsUsedInSurveyBySurveyKey = async (
   return rows[0];
 };
 
+const getQuestionsUsedInSurveyBySurveyId = async (
+  surveyId: number
+): Promise<QuestionsUsedInSurvey> => {
+  const [rows] = await promisePool.execute<GetQuestionsUsedInSurvey[]>(
+    `SELECT questions_used_in_survey.id, questions_used, survey_id
+    FROM questions_used_in_survey
+    WHERE questions_used_in_survey.survey_id = ?;`,
+    [surveyId]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('No questions_used_in_survey found', 404);
+  }
+  return rows[0];
+};
+
 const postQuestionsUsedInSurvey = async (
   questionsUsedInSurvey: PostQuestionsUsedInSurvey
 ) => {
@@ -97,6 +112,7 @@ export {
   getAllQuestionsUsedInSurvey,
   getQuestionsUsedInSurvey,
   getQuestionsUsedInSurveyBySurveyKey,
+  getQuestionsUsedInSurveyBySurveyId,
   postQuestionsUsedInSurvey,
   putQuestionsUsedInSurvey,
   deleteQuestionsUsedInSurvey
