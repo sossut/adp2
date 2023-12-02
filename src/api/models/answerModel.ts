@@ -86,7 +86,7 @@ const getAnswersBySurvey = async (
 
 const checkAnswersBySurvey = async (surveyID: number): Promise<Answer[]> => {
   const [rows] = await promisePool.execute<GetAnswer[]>(
-    `SELECT answers.id, question_id, answer, survey_id, questions.section_id
+    `SELECT answers.id, question_id, answer, survey_id, questions.section_id, questions.question_category_id
     FROM answers
     JOIN questions
     ON answers.question_id = questions.id
@@ -237,6 +237,42 @@ const getAnswersByCity = async (
   return rows;
 };
 
+const getThreeBestAnswerScoresBySurvey = async (surveyId: number) => {
+  const [rows] = await promisePool.execute<GetAnswer[]>(
+    `SELECT question_id, question_order, SUM(answer) AS answer_sum, questions.question
+    FROM answers
+    JOIN questions
+    ON answers.question_id = questions.id
+    WHERE survey_id = ?
+    GROUP BY question_id
+    ORDER BY SUM(answer) DESC
+    LIMIT 3;`,
+    [surveyId]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('No answers found', 404);
+  }
+  return rows[0];
+};
+
+const getThreeWorstAnswerScoresBySurvey = async (surveyId: number) => {
+  const [rows] = await promisePool.execute<GetAnswer[]>(
+    `SELECT question_id, question_order, SUM(answer) AS answer_sum, questions.question
+    FROM answers
+    JOIN questions
+    ON answers.question_id = questions.id
+    WHERE survey_id = ?
+    GROUP BY question_id
+    ORDER BY SUM(answer)
+    LIMIT 3;`,
+    [surveyId]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('No answers found', 404);
+  }
+  return rows[0];
+};
+
 const postAnswer = async (answer: PostAnswer) => {
   const [headers] = await promisePool.execute<ResultSetHeader>(
     'INSERT INTO answers (answer, question_id, survey_id) VALUES (?, ?, ?);',
@@ -304,6 +340,8 @@ export {
   checkAnswersBySurvey,
   getAnswersByPostcode,
   getAnswersByCity,
+  getThreeBestAnswerScoresBySurvey,
+  getThreeWorstAnswerScoresBySurvey,
   postAnswer,
   putAnswer,
   deleteAnswer,

@@ -11,7 +11,7 @@ import {
 const getAllResults = async (): Promise<Result[]> => {
   const [rows] = await promisePool.execute<GetResult[]>(
     `SELECT results.id, date_time, filename, results.survey_id, results.result_summary_id, answer_count,
-    JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
+    JSON_OBJECT('survey_id', surveys.id, 'date_time', surveys.date_time, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name, 'street', streets.name, 'street_number', addresses.number, 'postcode', postcodes.code, 'city', cities.name) AS housing_company,
     JSON_OBJECT('result_summary_id', result_summaries.id, 'summary', summary, 'recommendation', recommendation, 'section_one', section_one, 'section_two', 'section_three', section_three) AS result_summary
     FROM results
@@ -47,8 +47,8 @@ const getResult = async (
   userId: number,
   role: string
 ): Promise<GetResult> => {
-  let sql = `SELECT results.id, date_time, filename, results.survey_id, results.result_summary_id, answer_count,
-  JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
+  let sql = `SELECT results.id, results.date_time, filename, results.survey_id, results.result_summary_id, answer_count,
+  JSON_OBJECT('survey_id', surveys.id, 'date_time', surveys.date_time, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
   JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name, 'street', streets.name, 'street_number', addresses.number, 'postcode', postcodes.code, 'city', cities.name) AS housing_company,
   JSON_OBJECT('result_summary_id', result_summaries.id, 'summary', summary, 'recommendation', recommendation, 'section_one', section_one, 'section_two', section_two, 'section_three', section_three) AS result_summary
   FROM results
@@ -69,7 +69,7 @@ const getResult = async (
   WHERE results.id = ? AND surveys.user_id = ?;`;
   let params = [id, userId];
   if (role === 'admin') {
-    sql = `SELECT results.id, date_time, filename, results.survey_id, results.result_summary_id, answer_count,
+    sql = `SELECT results.id, results.date_time, filename, results.survey_id, results.result_summary_id, answer_count,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name, 'street', streets.name, 'street_number', addresses.number, 'postcode', postcodes.code, 'city', cities.name) AS housing_company,
     JSON_OBJECT('result_summary_id', result_summaries.id, 'summary', summary, 'recommendation', recommendation, 'section_one', section_one, 'section_two', section_two, 'section_three', section_three) AS result_summary

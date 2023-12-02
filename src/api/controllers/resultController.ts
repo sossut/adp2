@@ -16,6 +16,12 @@ import { checkIfSurveyBelongsToUser } from '../models/surveyModel';
 import { getSectionSummaryBySectionIdAndResult } from '../models/sectionSummaryModel';
 
 import { getSectionsUsedInSurveyBySurveyId } from '../models/sectionsUsedInSurveyModel';
+import {
+  checkAnswersBySurvey,
+  getThreeBestAnswerScoresBySurvey,
+  getThreeWorstAnswerScoresBySurvey
+} from '../models/answerModel';
+import { categoryCounter, getSurveyResultsAndCount } from '../../utils/utility';
 
 const resultListGet = async (
   req: Request,
@@ -60,6 +66,9 @@ const resultGet = async (
       (req.user as User).id,
       (req.user as User).role
     );
+    const totalResultValue = await getSurveyResultsAndCount(
+      result.survey_id as number
+    );
     //localhostille
     // const parsed = JSON.parse(result.result_summary);
     // const sectionOneResult = parsed.section_one;
@@ -90,12 +99,47 @@ const resultGet = async (
       sectionThreeResult
     );
 
+    const threeBestScores = await getThreeBestAnswerScoresBySurvey(
+      result.survey_id as number
+    );
+    const threeWorstScores = await getThreeWorstAnswerScoresBySurvey(
+      result.survey_id as number
+    );
+
+    const answers = await checkAnswersBySurvey(result.survey_id as number);
+    const categories = categoryCounter(answers);
+    const categoryOneResult = categories.categoryOneResult;
+    const categoryTwoResult = categories.categoryTwoResult;
+    const categoryThreeResult = categories.categoryThreeResult;
+    const categoryFourResult = categories.categoryFourResult;
+    const categoryFiveResult = categories.categoryFiveResult;
+    const categorySixResult = categories.categorySixResult;
+    const categorySevenResult = categories.categorySevenResult;
+    const categoryEightResult = categories.categoryEightResult;
+    const categoryNineResult = categories.categoryNineResult;
+    const categoryTenResult = categories.categoryTenResult;
+
     const response = {
       result: result,
+      total_result: totalResultValue,
       section_summary: {
         section_one: sectionOneSummary,
         section_two: sectionTwoSummary,
         section_three: sectionThreeSummary
+      },
+      three_best_scores: threeBestScores,
+      three_worst_scores: threeWorstScores,
+      category_results: {
+        category_temperature: categoryOneResult,
+        category_lighting: categoryTwoResult,
+        category_airquality: categoryThreeResult,
+        category_repairs_personalr: categoryFourResult,
+        category_upkeep_personal: categoryFiveResult,
+        category_energyefficiency: categorySixResult,
+        category_participation: categorySevenResult,
+        category_upkeep_hc: categoryEightResult,
+        category_economy: categoryNineResult,
+        category_community: categoryTenResult
       }
     };
 

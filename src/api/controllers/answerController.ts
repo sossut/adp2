@@ -13,7 +13,7 @@ import { User } from '../../interfaces/User';
 import { getSurveyByKey } from '../models/surveyModel';
 
 import { addAnswerCount, getResultAnswerCount } from '../models/resultModel';
-import { getSurveyResultsAndCount } from '../../utils/utility';
+import { getSurveyResultsAndCount, valueCheck } from '../../utils/utility';
 
 import { getQuestionCategorySummaryByCategoryIdAndResult } from '../models/questionCategorySummaryModel';
 import { getUserSectionSummaryBySectionIdAndResult } from '../models/userSectionSummaryModel';
@@ -227,16 +227,6 @@ const answerAllPost = async (
     const categoryNineResult = categoryNinePoints / categoryNine.length;
     const categoryTenResult = categoryTenPoints / categoryTen.length;
 
-    //KYSY TOPILTA MIKSKÄ NÄÄ VOIS LAITTAA
-    const valueCheck = (value: number) => {
-      if (value > 0.4) {
-        return 'positive';
-      } else if (value <= 0.4 && value > -0.2) {
-        return 'even';
-      } else if (value <= -0.2) {
-        return 'negative';
-      }
-    };
     const pointsValue = valueCheck(points) as String;
     const categoryOneResultValue = valueCheck(categoryOneResult) as String;
     const categoryTwoResultValue = valueCheck(categoryTwoResult) as String;
@@ -362,20 +352,50 @@ const answerAllPost = async (
           },
           category_summaries: {
             section_one: {
-              category_temerature: catetegoryOneSummary,
-              category_lighting: catetegoryTwoSummary,
-              category_airquality: catetegoryThreeSummary,
-              category_repairs_personal: catetegoryFourSummary,
-              category_upkeep_personal: catetegoryFiveSummary
+              category_temerature: {
+                summary: catetegoryOneSummary,
+                points: categoryOneResult
+              },
+              category_lighting: {
+                summary: catetegoryTwoSummary,
+                points: categoryTwoResult
+              },
+              category_airquality: {
+                summary: catetegoryThreeSummary,
+                points: categoryThreeResult
+              },
+              category_repairs_personal: {
+                summary: catetegoryFourSummary,
+                points: categoryFourResult
+              },
+              category_upkeep_personal: {
+                summary: catetegoryFiveSummary,
+                points: categoryFiveResult
+              }
             },
             section_two: {
-              category_energyefficiency: catetegorySixSummary,
-              category_participation: catetegorySevenSummary
+              category_energyefficiency: {
+                summary: catetegorySixSummary,
+                points: categorySixResult
+              },
+              category_participation: {
+                summary: catetegorySevenSummary,
+                points: categorySevenResult
+              }
             },
             section_three: {
-              category_upkeep_hc: catetegoryEightSummary,
-              category_economy: catetegoryNineSummary,
-              category_community: catetegoryTenSummary
+              category_upkeep_hc: {
+                summary: catetegoryEightSummary,
+                points: categoryEightResult
+              },
+              category_economy: {
+                summary: catetegoryNineSummary,
+                points: categoryNineResult
+              },
+              category_community: {
+                summary: catetegoryTenSummary,
+                points: categoryTenResult
+              }
             }
           }
         }
