@@ -66,8 +66,10 @@ const getQuestionCategorySummaryByCategoryIdAndResult = async (
   result: string
 ): Promise<GetQuestionCategorySummary> => {
   const [rows] = await promisePool.execute<GetQuestionCategorySummary[]>(
-    `SELECT question_category_summaries.summary, question_category_summaries.result
+    `SELECT question_category_summaries.summary, question_category_summaries.result, question_categories.category
     FROM question_category_summaries
+    JOIN question_categories
+    ON question_category_summaries.question_category_id = question_categories.id
     WHERE question_category_summaries.question_category_id = ?
     AND question_category_summaries.result = ?`,
     [question_category_id, result]
