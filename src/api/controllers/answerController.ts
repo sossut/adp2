@@ -352,7 +352,7 @@ const answerAllPost = async (
           },
           category_summaries: {
             section_one: {
-              category_temerature: {
+              category_temperature: {
                 summary: catetegoryOneSummary,
                 points: categoryOneResult
               },
