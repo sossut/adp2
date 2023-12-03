@@ -109,7 +109,7 @@ const getSurveyResultsAndCount = async (surveyId: number) => {
 
   //TÄHÄN MIN_RESPONSES
   if (answerCount < 5) {
-    return;
+    return 'not enough answers';
   } else {
     const answersBySurvey = await checkAnswersBySurvey(surveyId);
 
@@ -164,8 +164,6 @@ const getSurveyResultsAndCount = async (surveyId: number) => {
     const section2Result = section2Points / section2.length;
     const section3Result = section3Points / section3.length;
     const totalResult = points / answersBySurvey.length;
-
-    //KYSY TOPILTA MIKSKÄ NÄÄ VOIS LAITTAA
 
     const section1ResultValue = valueCheck(section1Result) as String;
     const section2ResultValue = valueCheck(section2Result) as String;

@@ -27,6 +27,7 @@ import { getAllSections } from '../models/sectionModel';
 import { postSectionsUsedInSurvey } from '../models/sectionsUsedInSurveyModel';
 import { SectionsUsedInSurvey } from '../../interfaces/SectionsUsedInSurvey';
 import { PostResult } from '../../interfaces/Result';
+import { getSurveyResultsAndCount } from '../../utils/utility';
 // eslint-disable-next-line import/no-extraneous-dependencies
 var randomstring = require('randomstring');
 
@@ -47,6 +48,13 @@ const surveyListGet = async (
     const surveys = await getAllSurveys(
       (req.user as User).id,
       (req.user as User).role
+    );
+    await Promise.all(
+      surveys.map(async (survey) => {
+        survey.result_value = (await getSurveyResultsAndCount(
+          survey.id
+        )) as string;
+      })
     );
     res.json(surveys);
   } catch (error) {

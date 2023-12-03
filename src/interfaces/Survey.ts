@@ -14,6 +14,7 @@ interface Survey {
   housing_company_id: HousingCompany | number;
   questions_used?: string;
   sections_used?: string;
+  result_value?: string;
 }
 
 interface GetSurvey extends RowDataPacket, Survey {}
