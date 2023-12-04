@@ -252,7 +252,7 @@ const getThreeBestAnswerScoresBySurvey = async (surveyId: number) => {
   if (rows.length === 0) {
     throw new CustomError('No answers found', 404);
   }
-  return rows[0];
+  return rows;
 };
 
 const getThreeWorstAnswerScoresBySurvey = async (surveyId: number) => {
@@ -270,7 +270,7 @@ const getThreeWorstAnswerScoresBySurvey = async (surveyId: number) => {
   if (rows.length === 0) {
     throw new CustomError('No answers found', 404);
   }
-  return rows[0];
+  return rows;
 };
 
 const postAnswer = async (answer: PostAnswer) => {
