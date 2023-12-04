@@ -31,15 +31,15 @@ const housingCompanyListGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }
@@ -56,17 +56,17 @@ const housingCompanyGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
-
-  const id = parseInt(req.params.id);
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
+
+    const id = parseInt(req.params.id);
     const housingCompany = await getHousingCompany(
       id,
       (req.user as User).id,
@@ -83,16 +83,16 @@ const housingCompaniesByUserGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
-  const id = parseInt(req.params.id);
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
+    const id = parseInt(req.params.id);
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }
@@ -108,16 +108,16 @@ const housingCompaniesByCurrentUserGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
-  const id = (req.user as User).id;
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
+    const id = (req.user as User).id;
     const housingCompanies = await getHousingCompaniesByUser(id);
     res.json(housingCompanies);
   } catch (error) {
@@ -130,16 +130,16 @@ const housingCompaniesByPostcodeGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
-  const postcodeID = parseInt(req.params.id);
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
+    const postcodeID = parseInt(req.params.id);
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }
@@ -181,16 +181,16 @@ const housingCompaniesByStreetGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
-  const street = parseInt(req.params.id);
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
+    const street = parseInt(req.params.id);
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }
@@ -222,16 +222,16 @@ const housingCompanyPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const user = req.user as User;
     req.body.user_id = user.id;
 
@@ -321,15 +321,15 @@ const housingCompanyPut = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const housingCompany = req.body;
     const id = parseInt(req.params.id);
     const result = await putHousingCompany(

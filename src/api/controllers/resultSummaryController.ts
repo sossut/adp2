@@ -35,15 +35,15 @@ const resultSummaryPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }
@@ -59,15 +59,15 @@ const resultSummaryPut = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }
@@ -83,15 +83,15 @@ const resultSummaryDelete = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }

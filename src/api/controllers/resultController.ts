@@ -4,7 +4,8 @@ import {
   getResult,
   postResult,
   deleteResult,
-  putResult
+  putResult,
+  getResultBySurveyId
 } from '../models/resultModel';
 
 import { Request, Response, NextFunction } from 'express';
@@ -28,15 +29,15 @@ const resultListGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }
@@ -52,17 +53,119 @@ const resultGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const result = await getResult(
       req.params.id,
+      (req.user as User).id,
+      (req.user as User).role
+    );
+    const totalResultValue = await getSurveyResultsAndCount(
+      result.survey_id as number
+    );
+    //localhostille
+    // const parsed = JSON.parse(result.result_summary);
+    // const sectionOneResult = parsed.section_one;
+    // const sectionTwoResult = parsed.section_two;
+    // const sectionThreeResult = parsed.section_three;
+
+    const sectionOneResult = result.result_summary.section_one;
+    const sectionTwoResult = result.result_summary.section_two;
+    const sectionThreeResult = result.result_summary.section_three;
+
+    const sections = await getSectionsUsedInSurveyBySurveyId(
+      result.survey_id as number
+    );
+    const sectionParsed = JSON.parse(sections.sections_used);
+
+    const sectionIDs = sectionParsed.map((section: any) => section.id);
+
+    const sectionOneSummary = await getSectionSummaryBySectionIdAndResult(
+      sectionIDs[0],
+      sectionOneResult as string
+    );
+    const sectionTwoSummary = await getSectionSummaryBySectionIdAndResult(
+      sectionIDs[1],
+      sectionTwoResult
+    );
+    const sectionThreeSummary = await getSectionSummaryBySectionIdAndResult(
+      sectionIDs[2],
+      sectionThreeResult
+    );
+
+    const threeBestScores = await getThreeBestAnswerScoresBySurvey(
+      result.survey_id as number
+    );
+    const threeWorstScores = await getThreeWorstAnswerScoresBySurvey(
+      result.survey_id as number
+    );
+
+    const answers = await checkAnswersBySurvey(result.survey_id as number);
+    const categories = categoryCounter(answers);
+    const categoryOneResult = categories.categoryOneResult;
+    const categoryTwoResult = categories.categoryTwoResult;
+    const categoryThreeResult = categories.categoryThreeResult;
+    const categoryFourResult = categories.categoryFourResult;
+    const categoryFiveResult = categories.categoryFiveResult;
+    const categorySixResult = categories.categorySixResult;
+    const categorySevenResult = categories.categorySevenResult;
+    const categoryEightResult = categories.categoryEightResult;
+    const categoryNineResult = categories.categoryNineResult;
+    const categoryTenResult = categories.categoryTenResult;
+
+    const response = {
+      result: result,
+      total_result: totalResultValue,
+      section_summary: {
+        section_one: sectionOneSummary,
+        section_two: sectionTwoSummary,
+        section_three: sectionThreeSummary
+      },
+      three_best_scores: threeBestScores,
+      three_worst_scores: threeWorstScores,
+      category_results: {
+        category_temperature: categoryOneResult,
+        category_lighting: categoryTwoResult,
+        category_airquality: categoryThreeResult,
+        category_repairs_personalr: categoryFourResult,
+        category_upkeep_personal: categoryFiveResult,
+        category_energyefficiency: categorySixResult,
+        category_participation: categorySevenResult,
+        category_upkeep_hc: categoryEightResult,
+        category_economy: categoryNineResult,
+        category_community: categoryTenResult
+      }
+    };
+
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resultGetBySurveyId = async (
+  req: Request<{ surveyID: string }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
+    const result = await getResultBySurveyId(
+      parseInt(req.params.surveyID),
       (req.user as User).id,
       (req.user as User).role
     );
@@ -154,15 +257,15 @@ const resultPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     if ((req.user as User).role !== 'admin') {
       const checkUser = await checkIfSurveyBelongsToUser(
         req.body.survey_id as number,
@@ -192,15 +295,15 @@ const resultPut = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const userID = (req.user as User).id;
     const role = (req.user as User).role;
     const result = await putResult(
@@ -225,15 +328,15 @@ const resultDelete = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const userID = (req.user as User).id;
     const role = (req.user as User).role;
     const result = await deleteResult(parseInt(req.params.id), userID, role);
@@ -243,4 +346,11 @@ const resultDelete = async (
   }
 };
 
-export { resultListGet, resultGet, resultPost, resultPut, resultDelete };
+export {
+  resultListGet,
+  resultGet,
+  resultGetBySurveyId,
+  resultPost,
+  resultPut,
+  resultDelete
+};

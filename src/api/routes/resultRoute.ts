@@ -4,7 +4,8 @@ import {
   resultGet,
   resultPost,
   resultPut,
-  resultDelete
+  resultDelete,
+  resultGetBySurveyId
 } from '../controllers/resultController';
 import { body, param } from 'express-validator';
 import passport from 'passport';
@@ -36,6 +37,13 @@ router
     resultPost
   );
 
+router
+  .route('/survey/:surveyID')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    param('surveyID').isNumeric(),
+    resultGetBySurveyId
+  );
 router
   .route('/:id')
   .get(

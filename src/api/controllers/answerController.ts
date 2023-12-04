@@ -23,16 +23,16 @@ const answersBySurveyGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
-  const id = parseInt(req.params.id);
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
+    const id = parseInt(req.params.id);
     const answers = await getAnswersBySurvey(
       id,
       (req.user as User).id,
@@ -49,15 +49,15 @@ const answersByPostcodeGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const answers = await getAnswersByPostcode(
       (req.user as User).id,
       (req.user as User).role,
@@ -74,12 +74,12 @@ const answersByCityGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors.array().join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors.array().join(', ');
+      throw new CustomError(messages, 400);
+    }
     const answers = await getAnswersByCity(
       (req.user as User).id,
       (req.user as User).role,
@@ -96,16 +96,16 @@ const answerPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const surveyId = await getSurveyByKey(req.body.survey_key as string);
 
     if (!surveyId) {
@@ -125,16 +125,16 @@ const answerAllPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const survey = await getSurveyByKey(req.body.survey_key as string);
     if (!survey) {
       throw new CustomError('Survey not found', 404);
@@ -414,15 +414,15 @@ const answerDelete = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }

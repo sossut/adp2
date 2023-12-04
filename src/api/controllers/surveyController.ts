@@ -36,15 +36,15 @@ const surveyListGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const surveys = await getAllSurveys(
       (req.user as User).id,
       (req.user as User).role
@@ -63,15 +63,15 @@ const surveyListGet = async (
 };
 
 const surveyGet = async (req: Request, res: Response, next: NextFunction) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const survey = await getSurvey(parseInt(req.params.id));
     res.json(survey);
   } catch (error) {
@@ -84,15 +84,15 @@ const surveyGetByKey = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const survey = await getSurveyByKey(req.params.key);
     res.json(survey);
   } catch (error) {
@@ -105,15 +105,15 @@ const surveyListByHousingCompanyGet = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const housingCompanyId = parseInt(req.params.id);
     const userID = (req.user as User).id;
     const role = (req.user as User).role;
@@ -133,15 +133,15 @@ const surveyPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req.body);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req.body);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const activeQuestions = await getAllActiveQuestions();
     if (activeQuestions.length === 0) {
       throw new CustomError('No active questions', 400);
@@ -227,15 +227,15 @@ const surveyPut = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const survey = req.body;
     const id = parseInt(req.params.id);
     const userID = (req.user as User).id;
@@ -257,15 +257,15 @@ const surveyDelete = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const userID = (req.user as User).id;
     const role = (req.user as User).role;
     await deleteResultBySurvey(parseInt(req.params.id), userID, role);

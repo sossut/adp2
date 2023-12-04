@@ -86,16 +86,16 @@ const userPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req.body);
-
-  if (!errors.isEmpty()) {
-    const messages = errors
-      .array()
-      .map((error) => `${error.msg}: ${error.param}`)
-      .join(', ');
-    throw new CustomError(messages, 400);
-  }
   try {
+    const errors = validationResult(req.body);
+
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(messages, 400);
+    }
     const { password, email } = req.body;
     req.body.password = bcrypt.hashSync(password, salt);
     if (!EmailValidator.validate(email)) {
