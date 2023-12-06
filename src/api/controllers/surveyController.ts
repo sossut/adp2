@@ -51,9 +51,9 @@ const surveyListGet = async (
     );
     await Promise.all(
       surveys.map(async (survey) => {
-        survey.result_value = (await getSurveyResultsAndCount(
-          survey.id
-        )) as string;
+        const result = await getSurveyResultsAndCount(survey.id);
+        const { totalResultValue } = result as any;
+        survey.result_value = totalResultValue;
       })
     );
     res.json(surveys);

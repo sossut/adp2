@@ -5,7 +5,8 @@ import {
   resultPost,
   resultPut,
   resultDelete,
-  resultGetBySurveyId
+  resultGetBySurveyId,
+  resultGetByPostcodeId
 } from '../controllers/resultController';
 import { body, param } from 'express-validator';
 import passport from 'passport';
@@ -35,6 +36,14 @@ router
     upload.single('filename'),
     body('survey_id').isNumeric().notEmpty().escape(),
     resultPost
+  );
+
+router
+  .route('/postcode/:postcodeID')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    param('postcodeID').isNumeric(),
+    resultGetByPostcodeId
   );
 
 router

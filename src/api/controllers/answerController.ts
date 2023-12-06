@@ -3,7 +3,7 @@ import {
   getAnswersBySurvey,
   postAnswer,
   deleteAnswer,
-  getAnswersByPostcode,
+  getAnswersByPostcodeId,
   getAnswersByCity
 } from '../models/answerModel';
 import { Request, Response, NextFunction } from 'express';
@@ -45,7 +45,7 @@ const answersBySurveyGet = async (
 };
 
 const answersByPostcodeGet = async (
-  req: Request<{ id: string; code: string }, {}, {}>,
+  req: Request<{ id: string; postcodeID: string }, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -58,10 +58,10 @@ const answersByPostcodeGet = async (
         .join(', ');
       throw new CustomError(messages, 400);
     }
-    const answers = await getAnswersByPostcode(
+    const answers = await getAnswersByPostcodeId(
       (req.user as User).id,
       (req.user as User).role,
-      req.params.code
+      parseInt(req.params.postcodeID)
     );
     res.json(answers);
   } catch (error) {

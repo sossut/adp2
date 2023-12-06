@@ -104,83 +104,100 @@ const categoryCounter = (array: Answer[]) => {
     categoryTenResult
   };
 };
-const getSurveyResultsAndCount = async (surveyId: number) => {
-  const answerCount = await getResultAnswerCount(surveyId);
-
-  //TÄHÄN MIN_RESPONSES
-  if (answerCount < 5) {
-    return 'not enough answers';
+const getSurveyResultsAndCount = async (
+  id: number,
+  callback: Function = checkAnswersBySurvey,
+  userID?: number,
+  role?: string
+) => {
+  let answers;
+  console.log(callback);
+  if (callback != checkAnswersBySurvey) {
+    answers = await callback(userID, role, id);
   } else {
-    const answersBySurvey = await checkAnswersBySurvey(surveyId);
+    const answerCount = await getResultAnswerCount(id);
 
-    let section1Points = 0;
-    let section2Points = 0;
-    let section3Points = 0;
-    let points = 0;
-
-    // let section1 = [];
-    // let section2 = [];
-    // let section3 = [];
-
-    // answersBySurvey.forEach((answer) => {
-    //   points += answer.answer;
-    //   switch (answer.section_id as unknown as string) {
-    //     case 1:
-    //       section1.push(answer);
-    //       section1Points += answer.answer;
-    //       break;
-    //     case 2:
-    //       section2.push(answer);
-    //       section2Points += answer.answer;
-    //       break;
-    //     case 3:
-    //       section3.push(answer);
-    //       section3Points += answer.answer;
-    //       break;
-    //   }
-    // });
-
-    const section1 = answersBySurvey.filter((answer) => {
-      points += answer.answer;
-      if (answer.section_id === 1) {
-        section1Points += answer.answer;
-        return answer.section_id === 1;
-      }
-    });
-    const section2 = answersBySurvey.filter((answer) => {
-      if (answer.section_id === 2) {
-        section2Points += answer.answer;
-        return answer.section_id === 2;
-      }
-    });
-    const section3 = answersBySurvey.filter((answer) => {
-      if (answer.section_id === 3) {
-        section3Points += answer.answer;
-        return answer.section_id === 3;
-      }
-    });
-
-    const section1Result = section1Points / section1.length;
-    const section2Result = section2Points / section2.length;
-    const section3Result = section3Points / section3.length;
-    const totalResult = points / answersBySurvey.length;
-
-    const section1ResultValue = valueCheck(section1Result) as String;
-    const section2ResultValue = valueCheck(section2Result) as String;
-    const section3ResultValue = valueCheck(section3Result) as String;
-    const totalResultValue = valueCheck(totalResult) as String;
-
-    const resultSummaryId = await getResultSummaryByValues(
-      section1ResultValue.toString(),
-      section2ResultValue.toString(),
-      section3ResultValue.toString()
-    );
-    if (!resultSummaryId) {
-      throw new CustomError('Result summary not found', 404);
+    //TÄHÄN MIN_RESPONSES
+    if (answerCount < 5) {
+      return 'not enough answers';
     }
-    await changeResultSummary(resultSummaryId.id, surveyId);
-    return totalResultValue;
+    answers = await checkAnswersBySurvey(id);
   }
+
+  let section1Points = 0;
+  let section2Points = 0;
+  let section3Points = 0;
+  let points = 0;
+
+  // let section1 = [];
+  // let section2 = [];
+  // let section3 = [];
+
+  // answersBySurvey.forEach((answer) => {
+  //   points += answer.answer;
+  //   switch (answer.section_id as unknown as string) {
+  //     case 1:
+  //       section1.push(answer);
+  //       section1Points += answer.answer;
+  //       break;
+  //     case 2:
+  //       section2.push(answer);
+  //       section2Points += answer.answer;
+  //       break;
+  //     case 3:
+  //       section3.push(answer);
+  //       section3Points += answer.answer;
+  //       break;
+  //   }
+  // });
+
+  const section1 = answers.filter((answer: Answer) => {
+    points += answer.answer;
+    if (answer.section_id === 1) {
+      section1Points += answer.answer;
+      return answer.section_id === 1;
+    }
+  });
+  const section2 = answers.filter((answer: Answer) => {
+    if (answer.section_id === 2) {
+      section2Points += answer.answer;
+      return answer.section_id === 2;
+    }
+  });
+  const section3 = answers.filter((answer: Answer) => {
+    if (answer.section_id === 3) {
+      section3Points += answer.answer;
+      return answer.section_id === 3;
+    }
+  });
+
+  const section1Result = section1Points / section1.length;
+  const section2Result = section2Points / section2.length;
+  const section3Result = section3Points / section3.length;
+  const totalResult = points / answers.length;
+
+  const section1ResultValue = valueCheck(section1Result) as String;
+  const section2ResultValue = valueCheck(section2Result) as String;
+  const section3ResultValue = valueCheck(section3Result) as String;
+  const totalResultValue = valueCheck(totalResult) as String;
+
+  const resultSummaryId = await getResultSummaryByValues(
+    section1ResultValue.toString(),
+    section2ResultValue.toString(),
+    section3ResultValue.toString()
+  );
+  if (!resultSummaryId) {
+    throw new CustomError('Result summary not found', 404);
+  }
+  if (callback === checkAnswersBySurvey) {
+    await changeResultSummary(resultSummaryId.id, id);
+  }
+  return {
+    totalResultValue,
+    section1ResultValue,
+    section2ResultValue,
+    section3ResultValue
+  };
 };
 
 export { getSurveyResultsAndCount, valueCheck, categoryCounter };

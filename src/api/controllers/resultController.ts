@@ -19,10 +19,12 @@ import { getSectionSummaryBySectionIdAndResult } from '../models/sectionSummaryM
 import { getSectionsUsedInSurveyBySurveyId } from '../models/sectionsUsedInSurveyModel';
 import {
   checkAnswersBySurvey,
+  getAnswersByPostcodeId,
   getThreeBestAnswerScoresBySurvey,
   getThreeWorstAnswerScoresBySurvey
 } from '../models/answerModel';
 import { categoryCounter, getSurveyResultsAndCount } from '../../utils/utility';
+import { getPostcode } from '../models/postcodeModel';
 
 const resultListGet = async (
   req: Request,
@@ -67,9 +69,11 @@ const resultGet = async (
       (req.user as User).id,
       (req.user as User).role
     );
-    const totalResultValue = await getSurveyResultsAndCount(
+    const resultValues = await getSurveyResultsAndCount(
       result.survey_id as number
     );
+    const { totalResultValue } = resultValues as any;
+
     //localhostille
     // const parsed = JSON.parse(result.result_summary);
     // const sectionOneResult = parsed.section_one;
@@ -169,9 +173,10 @@ const resultGetBySurveyId = async (
       (req.user as User).id,
       (req.user as User).role
     );
-    const totalResultValue = await getSurveyResultsAndCount(
+    const resultValues = await getSurveyResultsAndCount(
       result.survey_id as number
     );
+    const { totalResultValue } = resultValues as any;
     //localhostille
     // const parsed = JSON.parse(result.result_summary);
     // const sectionOneResult = parsed.section_one;
@@ -246,6 +251,48 @@ const resultGetBySurveyId = async (
       }
     };
 
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resultGetByPostcodeId = async (
+  req: Request<{ postcodeID: string }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const message = errors
+        .array()
+        .map((error) => `${error.msg}: ${error.param}`)
+        .join(', ');
+      throw new CustomError(message, 400);
+    }
+    const postcodeID = parseInt(req.params.postcodeID);
+    const {
+      totalResultValue,
+      section1ResultValue,
+      section2ResultValue,
+      section3ResultValue
+    } = (await getSurveyResultsAndCount(
+      postcodeID,
+      getAnswersByPostcodeId,
+      (req.user as User).id,
+      (req.user as User).role
+    )) as any;
+    const postcode = await getPostcode(req.params.postcodeID);
+    const response = {
+      postcode: postcode,
+      total_result: totalResultValue,
+      section_summary: {
+        section_one: section1ResultValue,
+        section_two: section2ResultValue,
+        section_three: section3ResultValue
+      }
+    };
     res.json(response);
   } catch (error) {
     next(error);
@@ -350,6 +397,7 @@ export {
   resultListGet,
   resultGet,
   resultGetBySurveyId,
+  resultGetByPostcodeId,
   resultPost,
   resultPut,
   resultDelete
