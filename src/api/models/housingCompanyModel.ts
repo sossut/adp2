@@ -4,6 +4,7 @@ import { ResultSetHeader } from 'mysql2';
 import {
   GetHousingCompany,
   HousingCompany,
+  PostHousingCompany,
   PutHousingCompany
 } from '../../interfaces/HousingCompany';
 import { deleteAddress } from './addressModel';
@@ -11,7 +12,7 @@ import { deleteAllSurveysFromHousingCompany } from './surveyModel';
 
 const getAllHousingCompanies = async (): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
-    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id,
+    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
@@ -51,7 +52,7 @@ const getHousingCompany = async (id: number, userID: number, role: string) => {
 
   if (hc[0].user_id === userID || role === 'admin') {
     const [rows] = await promisePool.execute<GetHousingCompany[]>(
-      `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id,
+      `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
@@ -84,7 +85,7 @@ const getHousingCompaniesByUser = async (
   userID: number
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
-    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id,
+    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
@@ -155,7 +156,7 @@ const getHousingCompaniesByCurrentUser = async (
   userID: number
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
-    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id,
+    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
    JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
@@ -193,7 +194,7 @@ const getHousingCompaniesByPostcode = async (
   postcodeID: number
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
-    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id,
+    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
@@ -231,7 +232,7 @@ const getHousingCompaniesByCity = async (
   cityID: number
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
-    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id,
+    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
@@ -302,11 +303,19 @@ const getHousingCompaniesByStreet = async (
   return rows;
 };
 
-const postHousingCompany = async (data: any): Promise<number> => {
+const postHousingCompany = async (
+  data: PostHousingCompany
+): Promise<number> => {
   const [headers] = await promisePool.execute<ResultSetHeader>(
-    `INSERT INTO housing_companies (name, apartment_count, address_id, user_id)
-    VALUES (?, ?, ?, ?);`,
-    [data.name, data.apartment_count, data.address_id, data.user_id]
+    `INSERT INTO housing_companies (name, apartment_count, address_id, user_id, location)
+    VALUES (?, ?, ?, ?, ?);`,
+    [
+      data.name,
+      data.apartment_count,
+      data.address_id,
+      data.user_id,
+      data.location
+    ]
   );
   if (headers.affectedRows === 0) {
     throw new CustomError('No housing companies added', 404);

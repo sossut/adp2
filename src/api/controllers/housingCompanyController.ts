@@ -11,7 +11,10 @@ import {
   getHousingCompaniesByStreet
 } from '../models/housingCompanyModel';
 import { Request, Response, NextFunction } from 'express';
-import { HousingCompany } from '../../interfaces/HousingCompany';
+import {
+  HousingCompany,
+  PostHousingCompany
+} from '../../interfaces/HousingCompany';
 import CustomError from '../../classes/CustomError';
 import MessageResponse from '../../interfaces/MessageResponse';
 import { User } from '../../interfaces/User';
@@ -202,23 +205,7 @@ const housingCompaniesByStreetGet = async (
 };
 
 const housingCompanyPost = async (
-  req: Request<
-    {},
-    {},
-    {
-      name: string;
-      apartment_count: number;
-      user_id: number;
-      address_number: string;
-      street_name: string;
-      street_id: number;
-      postcode_name: string;
-      postcode: string;
-      postcode_id: number;
-      city_name: string;
-      city_id: number;
-    }
-  >,
+  req: Request<{}, {}, PostHousingCompany>,
   res: Response,
   next: NextFunction
 ) => {
@@ -238,28 +225,28 @@ const housingCompanyPost = async (
     let city;
     try {
       if (!req.body.city_id) {
-        city = await getCityIdByName(req.body.city_name);
+        city = await getCityIdByName(req.body.city_name as string);
       } else {
         city = req.body.city_id;
       }
     } catch (error) {}
 
     if (!city) {
-      city = await postCity({ name: req.body.city_name });
+      city = await postCity({ name: req.body.city_name as string });
     }
 
     let postcode;
     try {
       if (!req.body.postcode_id) {
-        postcode = await getPostcodeIdByCode(req.body.postcode);
+        postcode = await getPostcodeIdByCode(req.body.postcode as string);
       } else {
         postcode = req.body.postcode_id;
       }
     } catch (error) {}
     if (!postcode) {
       postcode = await postPostcode({
-        name: req.body.postcode_name,
-        code: req.body.postcode,
+        name: req.body.postcode_name as string,
+        code: req.body.postcode as string,
         city_id: city
       });
     }
@@ -268,7 +255,7 @@ const housingCompanyPost = async (
     try {
       if (!req.body.street_id) {
         street = await getStreetIdByNameAndPostcodeID(
-          req.body.street_name,
+          req.body.street_name as string,
           postcode
         );
       } else {
@@ -277,7 +264,7 @@ const housingCompanyPost = async (
     } catch (error) {}
     if (!street) {
       street = await postStreet({
-        name: req.body.street_name,
+        name: req.body.street_name as string,
         postcode_id: postcode
       });
     }
@@ -285,25 +272,45 @@ const housingCompanyPost = async (
     let address;
     try {
       address = await getAddressByPostcodeAndStreetAndNumber(
-        req.body.postcode,
-        req.body.street_name,
-        req.body.address_number
+        req.body.postcode as string,
+        req.body.street_name as string,
+        req.body.address_number as string
       );
     } catch (error) {}
     if (!address) {
       address = await postAddress({
-        number: req.body.address_number,
+        number: req.body.address_number as string,
         street_id: street
       });
     } else {
       address = address.id;
     }
-    const result = await postHousingCompany({
+
+    const response = await fetch(
+      `https://paikkatietohaku.api.hel.fi/v1/address/?municipality=${req.body.city_name}&streetname=${req.body.street_name}&streetnumber=${req.body.address_number}`,
+      {
+        headers: {
+          Authorization: 'Bearer ' + process.env.PAIKKATIETO_API_KEY
+        }
+      }
+    );
+
+    const locationJson = await response.json();
+    let location, hc;
+    try {
+      location = JSON.stringify(locationJson.results[0].location.coordinates);
+    } catch (error) {
+      location = null;
+    }
+    hc = {
       name: req.body.name,
       apartment_count: req.body.apartment_count,
       address_id: address,
-      user_id: user.id
-    });
+      user_id: user.id,
+      location: location
+    };
+
+    const result = await postHousingCompany(hc as PostHousingCompany);
     if (result) {
       const message: MessageResponse = {
         message: 'housing company added',
