@@ -40,10 +40,11 @@ const resultListGet = async (
         .join(', ');
       throw new CustomError(messages, 400);
     }
-    if ((req.user as User).role !== 'admin') {
-      throw new CustomError('Unauthorized', 401);
-    }
-    const results = await getAllResults();
+
+    const results = await getAllResults(
+      (req.user as User).id,
+      (req.user as User).role
+    );
     res.json(results);
   } catch (error) {
     next(error);
