@@ -30,7 +30,6 @@ import {
 } from '../models/streetModel';
 import { getSurveysByHousingCompanyByTime } from '../models/surveyModel';
 import { getSurveyResultsAndCount } from '../../utils/utility';
-
 import fetch from 'node-fetch';
 const housingCompanyListGet = async (
   req: Request,
