@@ -111,7 +111,6 @@ const getSurveyResultsAndCount = async (
   role?: string
 ) => {
   let answers;
-  console.log(callback);
   if (callback != checkAnswersBySurvey) {
     answers = await callback(userID, role, id);
   } else {

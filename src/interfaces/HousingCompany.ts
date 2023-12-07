@@ -3,6 +3,7 @@ import { RowDataPacket } from 'mysql2';
 import { Address } from './Address';
 
 import { User } from './User';
+import { Survey } from './Survey';
 
 interface HousingCompany {
   id: number;
@@ -19,6 +20,8 @@ interface HousingCompany {
   postcode_name?: string;
   city_name?: string;
   postcode?: string;
+  survey_result?: string;
+  survey?: Survey;
 }
 
 interface GetHousingCompany extends RowDataPacket, HousingCompany {}

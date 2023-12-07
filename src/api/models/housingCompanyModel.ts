@@ -10,9 +10,11 @@ import {
 import { deleteAddress } from './addressModel';
 import { deleteAllSurveysFromHousingCompany } from './surveyModel';
 
-const getAllHousingCompanies = async (): Promise<HousingCompany[]> => {
-  const [rows] = await promisePool.execute<GetHousingCompany[]>(
-    `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
+const getAllHousingCompanies = async (
+  userID: number,
+  role: string
+): Promise<HousingCompany[]> => {
+  let sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
@@ -28,8 +30,32 @@ const getAllHousingCompanies = async (): Promise<HousingCompany[]> => {
     ON streets.postcode_id = postcodes.id
     JOIN cities
     ON postcodes.city_id = cities.id
-    ;`
-  );
+    WHERE housing_companies.user_id = ?
+    ;`;
+  let params = [userID];
+
+  if (role === 'admin') {
+    sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
+    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+    JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
+    FROM housing_companies
+    JOIN users
+    ON housing_companies.user_id = users.id
+    JOIN addresses
+    ON housing_companies.address_id = addresses.id
+    JOIN streets
+    ON addresses.street_id = streets.id
+    JOIN postcodes
+    ON streets.postcode_id = postcodes.id
+    JOIN cities
+    ON postcodes.city_id = cities.id
+    ;`;
+    params = [];
+  }
+  const format = promisePool.format(sql, params);
+  const [rows] = await promisePool.execute<GetHousingCompany[]>(format);
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }

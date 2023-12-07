@@ -15,6 +15,14 @@ interface Survey {
   questions_used?: string;
   sections_used?: string;
   result_value?: string;
+  result?:
+    | 'not enough answers'
+    | {
+        totalResultValue: String;
+        section1ResultValue: String;
+        section2ResultValue: String;
+        section3ResultValue: String;
+      };
 }
 
 interface GetSurvey extends RowDataPacket, Survey {}

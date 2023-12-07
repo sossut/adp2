@@ -28,6 +28,8 @@ import {
   getStreetIdByNameAndPostcodeID,
   postStreet
 } from '../models/streetModel';
+import { getSurveysByHousingCompanyByTime } from '../models/surveyModel';
+import { getSurveyResultsAndCount } from '../../utils/utility';
 
 const housingCompanyListGet = async (
   req: Request,
@@ -43,10 +45,39 @@ const housingCompanyListGet = async (
         .join(', ');
       throw new CustomError(messages, 400);
     }
-    if ((req.user as User).role !== 'admin') {
-      throw new CustomError('Unauthorized', 401);
-    }
-    const housingCompanies = await getAllHousingCompanies();
+
+    const housingCompanies = await getAllHousingCompanies(
+      (req.user as User).id,
+      (req.user as User).role
+    );
+
+    try {
+      await Promise.all(
+        housingCompanies.map(async (hc) => {
+          let surveys;
+          try {
+            surveys = await getSurveysByHousingCompanyByTime(
+              hc.id,
+              (req.user as User).id,
+              (req.user as User).role
+            );
+            let foundResult = false;
+            await Promise.all(
+              surveys.map(async (survey) => {
+                if (!foundResult) {
+                  if (survey.result != 'not enough answers') {
+                    const result = await getSurveyResultsAndCount(survey.id);
+                    const { totalResultValue } = result as any;
+                    hc.survey_result = totalResultValue;
+                    foundResult = true;
+                  }
+                }
+              })
+            );
+          } catch (error) {}
+        })
+      );
+    } catch (error) {}
 
     res.json(housingCompanies);
   } catch (error) {
