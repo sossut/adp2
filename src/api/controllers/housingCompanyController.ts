@@ -31,6 +31,7 @@ import {
 import { getSurveysByHousingCompanyByTime } from '../models/surveyModel';
 import { getSurveyResultsAndCount } from '../../utils/utility';
 
+import fetch from 'node-fetch';
 const housingCompanyListGet = async (
   req: Request,
   res: Response,
@@ -326,7 +327,7 @@ const housingCompanyPost = async (
       }
     );
 
-    const locationJson = await response.json();
+    const locationJson = (await response.json()) as any;
     let location, hc;
     try {
       location = JSON.stringify(locationJson.results[0].location.coordinates);
