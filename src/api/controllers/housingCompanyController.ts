@@ -320,8 +320,6 @@ const housingCompanyPost = async (
     const addressNumber = req.body.address_number?.trim() as string;
     const cityName = req.body.city_name?.trim() as string;
 
-    const url = `https://paikkatietohaku.api.hel.fi/v1/address/?municipality=${req.body.city_name}&streetname=${req.body.street_name}&streetnumber=${req.body.address_number}`;
-    console.log(url);
     const response = await fetch(
       `https://paikkatietohaku.api.hel.fi/v1/address/?municipality=${cityName}&streetname=${streetName}&streetnumber=${addressNumber}`,
       {
@@ -332,7 +330,6 @@ const housingCompanyPost = async (
     );
 
     const locationJson = (await response.json()) as any;
-    console.log(locationJson);
     let location, hc;
     try {
       location = JSON.stringify(locationJson.results[0].location.coordinates);
