@@ -330,6 +330,7 @@ const housingCompanyPost = async (
     );
 
     const locationJson = (await response.json()) as any;
+    console.log(locationJson);
     let location, hc;
     try {
       location = JSON.stringify(locationJson.results[0].location.coordinates);
