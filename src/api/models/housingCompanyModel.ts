@@ -71,14 +71,7 @@ const getAllHousingCompanies = async (
 };
 
 const getHousingCompany = async (id: number, userID: number, role: string) => {
-  const [hc] = await promisePool.execute<GetHousingCompany[]>(
-    'SELECT user_id FROM housing_companies WHERE id = ?',
-    [id]
-  );
-
-  if (hc[0].user_id === userID || role === 'admin') {
-    const [rows] = await promisePool.execute<GetHousingCompany[]>(
-      `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
+  let sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
@@ -94,17 +87,37 @@ const getHousingCompany = async (id: number, userID: number, role: string) => {
     ON streets.postcode_id = postcodes.id
     JOIN cities
     ON postcodes.city_id = cities.id
+    WHERE housing_companies.id = ? AND housing_companies.user_id = ?
+    ;`;
+  let params = [id, userID];
+  if (role === 'admin') {
+    sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
+    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
+    JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+    JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
+    FROM housing_companies
+    JOIN users
+    ON housing_companies.user_id = users.id
+    JOIN addresses
+    ON housing_companies.address_id = addresses.id
+    JOIN streets
+    ON addresses.street_id = streets.id
+    JOIN postcodes
+    ON streets.postcode_id = postcodes.id
+    JOIN cities
+    ON postcodes.city_id = cities.id
     WHERE housing_companies.id = ?
-    ;`,
-      [id]
-    );
-    if (rows.length === 0) {
-      throw new CustomError('Housing company not found', 404);
-    }
-    return rows[0] as HousingCompany;
-  } else {
-    throw new CustomError('Unauthorized', 401);
+    ;`;
+    params = [id];
   }
+  const format = promisePool.format(sql, params);
+  const [rows] = await promisePool.execute<GetHousingCompany[]>(format);
+
+  if (rows.length === 0) {
+    throw new CustomError('Housing company not found', 404);
+  }
+  return rows[0] as HousingCompany;
 };
 
 const getHousingCompaniesByUser = async (

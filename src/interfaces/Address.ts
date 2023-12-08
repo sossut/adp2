@@ -5,6 +5,7 @@ interface Address {
   id: number;
   number: string;
   street_id: number | Street;
+  street?: string;
 }
 
 interface GetAddress extends RowDataPacket, Address {}

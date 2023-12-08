@@ -31,6 +31,8 @@ import {
 import { getSurveysByHousingCompanyByTime } from '../models/surveyModel';
 import { getSurveyResultsAndCount } from '../../utils/utility';
 import fetch from 'node-fetch';
+import { Postcode } from '../../interfaces/Postcode';
+import { Address } from '../../interfaces/Address';
 const housingCompanyListGet = async (
   req: Request,
   res: Response,
@@ -371,10 +373,115 @@ const housingCompanyPut = async (
         .join(', ');
       throw new CustomError(messages, 400);
     }
-    const housingCompany = req.body;
     const id = parseInt(req.params.id);
+    const old = await getHousingCompany(
+      id,
+      (req.user as User).id,
+      (req.user as User).role
+    );
+
+    let city = old.city?.city_id;
+    console.log(old);
+    try {
+      console.log(req.body.city_name, old.city?.name);
+      if (req.body.city_name != old.city?.name) {
+        console.log('jummijammi');
+        if (!req.body.city_id) {
+          city = await getCityIdByName(req.body.city_name as string);
+        } else {
+          city = req.body.city_id;
+        }
+      }
+    } catch (error) {}
+
+    if (!city) {
+      city = await postCity({ name: req.body.city_name as string });
+    }
+
+    let postcode = (old.postcode as Postcode)?.postcode_id;
+
+    try {
+      if (req.body.postcode !== (old.postcode as Postcode)?.code) {
+        if (!req.body.postcode_id) {
+          postcode = await getPostcodeIdByCode(req.body.postcode as string);
+        } else {
+          postcode = req.body.postcode_id;
+        }
+      }
+    } catch (error) {}
+    if (!postcode) {
+      postcode = await postPostcode({
+        name: req.body.postcode_name as string,
+        code: req.body.postcode as string,
+        city_id: city
+      });
+    }
+
+    let street = old.address?.street_id;
+    try {
+      if (req.body.street_name !== (old.address as Address)?.street) {
+        if (!req.body.street_id) {
+          street = await getStreetIdByNameAndPostcodeID(
+            req.body.street_name as string,
+            postcode
+          );
+        } else {
+          street = req.body.street_id;
+        }
+      }
+    } catch (error) {}
+    if (!street) {
+      street = await postStreet({
+        name: req.body.street_name as string,
+        postcode_id: postcode
+      });
+    }
+
+    let address;
+    try {
+      address = await getAddressByPostcodeAndStreetAndNumber(
+        req.body.postcode as string,
+        req.body.street_name as string,
+        req.body.address_number as string
+      );
+    } catch (error) {}
+    if (!address) {
+      address = await postAddress({
+        number: req.body.address_number as string,
+        street_id: street
+      });
+    } else {
+      address = address.id;
+    }
+    const streetName = req.body.street_name?.trim() as string;
+    const addressNumber = req.body.address_number?.trim() as string;
+    const cityName = req.body.city_name?.trim() as string;
+
+    const response = await fetch(
+      `https://paikkatietohaku.api.hel.fi/v1/address/?municipality=${cityName}&streetname=${streetName}&streetnumber=${addressNumber}`,
+      {
+        headers: {
+          Authorization: 'Bearer ' + process.env.PAIKKATIETO_API_KEY
+        }
+      }
+    );
+
+    const locationJson = (await response.json()) as any;
+    let location, hc;
+    try {
+      location = JSON.stringify(locationJson.results[0].location.coordinates);
+    } catch (error) {
+      location = null;
+    }
+    hc = {
+      name: req.body.name,
+      apartment_count: req.body.apartment_count,
+      address_id: address,
+      location: location
+    } as HousingCompany;
+
     const result = await putHousingCompany(
-      housingCompany,
+      hc,
       id,
       (req.user as User).id,
       (req.user as User).role

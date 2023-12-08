@@ -6,6 +6,7 @@ interface Postcode {
   code: string;
   city_id: City | number;
   name: string;
+  postcode_id?: number;
 }
 
 interface GetPostcode extends RowDataPacket, Postcode {}

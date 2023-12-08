@@ -4,6 +4,8 @@ import { Address } from './Address';
 
 import { User } from './User';
 import { Survey } from './Survey';
+import { City } from './City';
+import { Postcode } from './Postcode';
 
 interface HousingCompany {
   id: number;
@@ -19,9 +21,11 @@ interface HousingCompany {
   city_id?: number;
   postcode_name?: string;
   city_name?: string;
-  postcode?: string;
+  postcode?: string | Postcode;
   survey_result?: string;
   survey?: Survey;
+  city?: City;
+  address?: Address;
 }
 
 interface GetHousingCompany extends RowDataPacket, HousingCompany {}

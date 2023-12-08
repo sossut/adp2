@@ -3,6 +3,7 @@ import { RowDataPacket } from 'mysql2';
 interface City {
   id: number;
   name: string;
+  city_id?: number;
 }
 
 interface GetCity extends RowDataPacket, City {}
