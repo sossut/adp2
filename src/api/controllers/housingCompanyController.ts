@@ -381,11 +381,9 @@ const housingCompanyPut = async (
     );
 
     let city = old.city?.city_id;
-    console.log(old);
+
     try {
-      console.log(req.body.city_name, old.city?.name);
       if (req.body.city_name != old.city?.name) {
-        console.log('jummijammi');
         if (!req.body.city_id) {
           city = await getCityIdByName(req.body.city_name as string);
         } else {
