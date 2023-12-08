@@ -354,7 +354,7 @@ const putHousingCompany = async (
   id: number,
   userID: number,
   role: string
-): Promise<boolean> => {
+) => {
   let sql = 'UPDATE housing_companies SET ? WHERE id = ? AND user_id = ?;';
   let params = [housingCompany, id, userID];
   if (role === 'admin') {
@@ -366,7 +366,7 @@ const putHousingCompany = async (
   if (headers.affectedRows === 0) {
     throw new CustomError('Housing company not found', 404);
   }
-  return true;
+  return headers.affectedRows;
 };
 
 const getAddressIDByHousingCompany = async (id: number): Promise<number> => {
