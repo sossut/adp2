@@ -12,7 +12,6 @@ const getAllResults = async (
   userID: number,
   role: string
 ): Promise<Result[]> => {
-  console.log(userID, role);
   let sql = `SELECT results.id, results.date_time, filename, results.survey_id, results.result_summary_id, answer_count,
   JSON_OBJECT('survey_id', surveys.id, 'date_time', surveys.date_time, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
   JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name, 'street', streets.name, 'street_number', addresses.number, 'postcode', postcodes.code, 'city', cities.name, 'location', location) AS housing_company,
@@ -56,9 +55,9 @@ const getAllResults = async (
   ON results.result_summary_id = result_summaries.id`;
     params = [];
   }
-  console.log(params);
+
   const format = promisePool.format(sql, params);
-  console.log(format);
+
   const [rows] = await promisePool.execute<GetResult[]>(format);
   if (rows.length === 0) {
     throw new CustomError('No results found', 404);

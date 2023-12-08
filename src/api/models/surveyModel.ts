@@ -298,10 +298,9 @@ const getSurveysByHousingCompanyByTime = async (
     rows.map(async (survey) => {
       const result = await getSurveyResultsAndCount(survey.id);
       survey.result = result;
-      console.log(result);
     })
   );
-  console.log(rows);
+
   return rows;
 };
 
