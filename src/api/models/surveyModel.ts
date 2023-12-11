@@ -276,7 +276,7 @@ const getSurveysByHousingCompanyByTime = async (
       ;`;
   let params = [housingCompanyID, userID];
   if (role === 'admin') {
-    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time
+    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time,
         JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
         JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
         FROM surveys
