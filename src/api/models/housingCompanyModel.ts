@@ -17,7 +17,7 @@ const getAllHousingCompanies = async (
   let sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -38,7 +38,7 @@ const getAllHousingCompanies = async (
     sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -74,7 +74,7 @@ const getHousingCompany = async (id: number, userID: number, role: string) => {
   let sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -94,7 +94,7 @@ const getHousingCompany = async (id: number, userID: number, role: string) => {
     sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-    JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+    JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -127,7 +127,7 @@ const getHousingCompaniesByUser = async (
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -198,7 +198,7 @@ const getHousingCompaniesByCurrentUser = async (
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-   JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+   JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -236,7 +236,7 @@ const getHousingCompaniesByPostcode = async (
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -274,7 +274,7 @@ const getHousingCompaniesByCity = async (
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -312,7 +312,7 @@ const getHousingCompaniesByStreet = async (
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id,
     JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users

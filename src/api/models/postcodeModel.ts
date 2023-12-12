@@ -14,7 +14,7 @@ import {
 
 const getAllPostcodes = async (): Promise<Postcode[]> => {
   const [rows] = await promisePool.execute<GetPostcode[]>(
-    `SELECT postcodes.id, postcodes.name, postcodes.code,
+    `SELECT postcodes.id, postcodes.name, postcodes.code, area,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM postcodes
     JOIN cities
@@ -33,7 +33,7 @@ const getAllPostcodes = async (): Promise<Postcode[]> => {
 
 const getPostcode = async (id: string): Promise<GetPostcode> => {
   const [rows] = await promisePool.execute<GetPostcode[]>(
-    `SELECT postcodes.id, postcodes.name, postcodes.code,
+    `SELECT postcodes.id, postcodes.name, postcodes.code, area,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM postcodes
     JOIN cities
@@ -83,8 +83,8 @@ const getPostcodesWhereCurrentUserHasHousingCompanies = async (
 
 const postPostcode = async (postcode: PostPostcode) => {
   const [headers] = await promisePool.execute<ResultSetHeader>(
-    'INSERT INTO postcodes (code, name, city_id) VALUES (?, ?, ?);',
-    [postcode.code, postcode.name, postcode.city_id]
+    'INSERT INTO postcodes (code, name, city_id, area) VALUES (?, ?, ?, ?);',
+    [postcode.code, postcode.name, postcode.city_id, postcode.area]
   );
   if (headers.affectedRows === 0) {
     throw new CustomError('Postcode not created', 400);

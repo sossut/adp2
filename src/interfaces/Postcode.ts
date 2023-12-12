@@ -7,6 +7,7 @@ interface Postcode {
   city_id: City | number;
   name: string;
   postcode_id?: number;
+  area?: string | null;
 }
 
 interface GetPostcode extends RowDataPacket, Postcode {}
