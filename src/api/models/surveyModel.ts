@@ -73,7 +73,18 @@ const getAllSurveys = async (
   if (rows.length === 0) {
     throw new CustomError('No surveys found', 404);
   }
-  return rows;
+  const surveys: Survey[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    result: JSON.parse(row.result?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}'),
+    address: JSON.parse(row.address?.toString() || '{}'),
+    street: JSON.parse(row.street.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}'),
+  }));
+  return surveys;
+  // return rows;
 };
 
 const getSurvey = async (id: number): Promise<Survey> => {
@@ -107,7 +118,18 @@ const getSurvey = async (id: number): Promise<Survey> => {
   if (rows.length === 0) {
     throw new CustomError('Survey not found', 404);
   }
-  return rows[0];
+  const surveys: GetSurvey[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    result: JSON.parse(row.result?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}'),
+    address: JSON.parse(row.address?.toString() || '{}'),
+    street: JSON.parse(row.street.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}'),
+  }));
+  return surveys[0];
+  // return rows[0];
 };
 
 const postSurvey = async (survey: PostSurvey) => {
@@ -180,7 +202,18 @@ const getSurveyByKey = async (key: string): Promise<Survey> => {
   if (rows.length === 0) {
     throw new CustomError('Survey not found', 404);
   }
-  return rows[0];
+  const surveys: GetSurvey[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    result: JSON.parse(row.result?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}'),
+    address: JSON.parse(row.address?.toString() || '{}'),
+    street: JSON.parse(row.street.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}'),
+  }));
+  return surveys[0];
+  // return rows[0];
 };
 
 const checkIfSurveyKeyExists = async (key: string): Promise<boolean> => {
@@ -238,7 +271,7 @@ const getSurveysByHousingCompany = async (
       ;`;
   let params = [housingCompanyID, userID];
   if (role === 'admin') {
-    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time
+    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time,
         JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
         JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
         FROM surveys
@@ -255,7 +288,15 @@ const getSurveysByHousingCompany = async (
   if (rows.length === 0) {
     throw new CustomError('No surveys found', 404);
   }
-  return rows;
+  const surveys: Survey[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+
+  }));
+  return surveys;
+  // return rows;
 };
 
 const getSurveysByHousingCompanyByTime = async (
@@ -276,7 +317,7 @@ const getSurveysByHousingCompanyByTime = async (
       ;`;
   let params = [housingCompanyID, userID];
   if (role === 'admin') {
-    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time
+    sql = `SELECT surveys.id, start_date, end_date, min_responses, max_responses, survey_status, surveys.user_id, survey_key, surveys.housing_company_id, date_time,
         JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
         JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
         FROM surveys
@@ -300,8 +341,15 @@ const getSurveysByHousingCompanyByTime = async (
       survey.result = result;
     })
   );
+  const surveys: Survey[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
 
-  return rows;
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+
+  }));
+  return surveys;
+  // return rows;
 };
 
 const deleteSurvey = async (

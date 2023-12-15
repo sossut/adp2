@@ -19,7 +19,7 @@ const getAllQuestions = async (): Promise<Question[]> => {
 
   const questions: Question[] = rows.map((row) => ({
     ...row,
-    // question: JSON.parse(row.question?.toString() || '{}'),
+    question: JSON.parse(row.question?.toString() || '{}'),
     choices: JSON.parse(row.choices?.toString() || '{}')
   }));
   return questions;
@@ -35,7 +35,7 @@ const getAllQuestionsOnly = async (): Promise<Question[]> => {
   }
   const questions: Question[] = rows.map((row) => ({
     ...row,
-    // question: JSON.parse(row.question?.toString() || '{}'),
+    question: JSON.parse(row.question?.toString() || '{}'),
     choices: JSON.parse(row.choices?.toString() || '{}')
   }));
   return questions;
@@ -51,7 +51,7 @@ const getAllActiveQuestions = async (): Promise<Question[]> => {
   }
   const questions: Question[] = rows.map((row) => ({
     ...row,
-    // question: JSON.parse(row.question?.toString() || '{}'),
+    question: JSON.parse(row.question?.toString() || '{}'),
     choices: JSON.parse(row.choices?.toString() || '{}')
   }));
   return questions;
@@ -75,7 +75,13 @@ const getQuestion = async (id: string): Promise<Question> => {
   if (rows.length === 0) {
     throw new CustomError('No questions found', 404);
   }
-  return rows[0];
+  const questions: Question[] = rows.map((row) => ({
+    ...row,
+    question: JSON.parse(row.question?.toString() || '{}'),
+    choices: JSON.parse(row.choices?.toString() || '{}')
+  }));
+  return questions[0];
+  // return rows[0];
 };
 
 const getQuestionOnly = async (id: string): Promise<Question> => {

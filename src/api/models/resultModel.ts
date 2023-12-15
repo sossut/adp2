@@ -62,13 +62,14 @@ const getAllResults = async (
   if (rows.length === 0) {
     throw new CustomError('No results found', 404);
   }
-  // const results: Result[] = rows.map((row) => ({
-  //   ...row,
-  //   survey: JSON.parse(row.survey?.toString() || '{}'),
-  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
-  // }));
-  // return results;
-  return rows;
+  const results: Result[] = rows.map((row) => ({
+    ...row,
+    survey: JSON.parse(row.survey?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}'),
+    result_summary: JSON.parse(row.result_summary?.toString() || '{}')
+  }));
+  return results;
+  // return rows;
 };
 
 const getResult = async (
@@ -126,7 +127,14 @@ const getResult = async (
   if (rows.length === 0) {
     throw new CustomError('Result not found', 404);
   }
-  return rows[0];
+  const results: GetResult[] = rows.map((row) => ({
+    ...row,
+    survey: JSON.parse(row.survey?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}'),
+    result_summary: JSON.parse(row.result_summary?.toString() || '{}')
+  }));
+  return results[0];
+  // return rows[0];
 };
 
 const getResultBySurveyId = async (
@@ -184,7 +192,14 @@ const getResultBySurveyId = async (
   if (rows.length === 0) {
     throw new CustomError('Result not found', 404);
   }
-  return rows[0];
+  const results: GetResult[] = rows.map((row) => ({
+    ...row,
+    survey: JSON.parse(row.survey?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}'),
+    result_summary: JSON.parse(row.result_summary?.toString() || '{}')
+  }));
+  return results[0];
+  // return rows[0];
 };
 
 const getResultResultSummary = async (

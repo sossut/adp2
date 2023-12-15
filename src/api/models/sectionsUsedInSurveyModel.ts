@@ -26,13 +26,13 @@ const getAllSectionsUsedInSurveys = async (): Promise<
   if (rows.length === 0) {
     throw new CustomError('No sections used in surveys found', 404);
   }
-  // const sectionsUsedInSurveys: SectionsUsedInSurvey[] = rows.map((row) => ({
-  //   ...row,
-  //   section: JSON.parse(row.section?.toString() || '{}'),
-  //   survey: JSON.parse(row.survey?.toString() || '{}')
-  // }));
-  // return sectionsUsedInSurveys;
-  return rows;
+  const sectionsUsedInSurveys: SectionsUsedInSurvey[] = rows.map((row) => ({
+    ...row,
+    section: JSON.parse(row.section?.toString() || '{}'),
+    survey: JSON.parse(row.survey?.toString() || '{}')
+  }));
+  return sectionsUsedInSurveys;
+  // return rows;
 };
 
 const getSectionsUsedInSurvey = async (
@@ -53,7 +53,13 @@ const getSectionsUsedInSurvey = async (
   if (rows.length === 0) {
     throw new CustomError('No sections used in surveys found', 404);
   }
-  return rows[0];
+  const sectionsUsedInSurveys: GetSectionsUsedInSurvey[] = rows.map((row) => ({
+    ...row,
+    section: JSON.parse(row.section?.toString() || '{}'),
+    survey: JSON.parse(row.survey?.toString() || '{}')
+  }));
+  return sectionsUsedInSurveys[0];
+  // return rows[0];
 };
 
 const getSectionsUsedInSurveyBySurveyId = async (

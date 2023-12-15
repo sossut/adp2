@@ -20,12 +20,12 @@ const getAllSectionSummaries = async (): Promise<SectionSummary[]> => {
   if (rows.length === 0) {
     throw new CustomError('No section summaries found', 404);
   }
-  // const sectionSummaries: SectionSummary[] = rows.map((row) => ({
-  //   ...row,
-  //   section: JSON.parse(row.section?.toString() || '{}')
-  // }));
-  // return sectionSummaries;
-  return rows;
+  const sectionSummaries: SectionSummary[] = rows.map((row) => ({
+    ...row,
+    section: JSON.parse(row.section?.toString() || '{}')
+  }));
+  return sectionSummaries;
+  // return rows;
 };
 
 const getSectionSummary = async (id: number): Promise<GetSectionSummary> => {
@@ -41,7 +41,12 @@ const getSectionSummary = async (id: number): Promise<GetSectionSummary> => {
   if (rows.length === 0) {
     throw new CustomError('No section summaries found', 404);
   }
-  return rows[0];
+  const sectionSummaries: GetSectionSummary[] = rows.map((row) => ({
+    ...row,
+    section: JSON.parse(row.section?.toString() || '{}')
+  }));
+  return sectionSummaries[0];
+  // return rows[0];
 };
 
 const getSectionSummaryBySectionIdAndResult = async (

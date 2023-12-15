@@ -25,6 +25,7 @@ CREATE TABLE postcodes
 	code TEXT NOT NULL,
 	NAME TEXT NOT NULL,
 	city_id INT NOT NULL,
+	AREA TEXT,
 	PRIMARY KEY (id),
 	FOREIGN KEY (city_id) REFERENCES cities(id),
 	UNIQUE (CODE(255))

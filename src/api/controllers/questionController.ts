@@ -126,6 +126,7 @@ const questionPut = async (
   next: NextFunction
 ) => {
   try {
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const messages = errors
@@ -137,8 +138,10 @@ const questionPut = async (
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }
+    const id = parseInt(req.params.id);
     try {
       const question = await getQuestionOnly(req.params.id);
+ 
       const oldQuestionOrder = question.question_order;
       const newQuestionOrder = req.body.question_order;
       const questions = await getAllQuestionsOnly();
@@ -161,25 +164,25 @@ const questionPut = async (
         }
       }
     } catch (error) {
-      next(error);
+ 
     }
-
     const choices = req.body.choices as PutQuestionChoice[];
+
     if (choices) {
-      const questionsChoises = await getQuestionChoiceIdsByQuestionId(
-        parseInt(req.params.id)
-      );
+      const questionsChoises = await getQuestionChoiceIdsByQuestionId(id);
+
       for (let i = 0; i < questionsChoises.length; i++) {
         const qC = {
-          question_id: parseInt(req.params.id),
+          question_id: id,
           choice_id: choices[i].choice_id
         };
+        console.log(qC, questionsChoises[i].id);
         await putQuestionChoice(qC, questionsChoises[i].id);
       }
       delete req.body.choices;
     }
     const question = req.body;
-    const result = await putQuestion(question, parseInt(req.params.id));
+    const result = await putQuestion(question, id);
     if (result) {
       res.json({
         message: 'question updated'

@@ -73,15 +73,15 @@ const getAnswersBySurvey = async (
   if (rows.length === 0) {
     throw new CustomError('No answers found', 404);
   }
-  // const answers: Answer[] = rows.map((row) => ({
-  //   ...row,
-  //   question: JSON.parse(row.question?.toString() || '{}'),
-  //   survey: JSON.parse(row.survey?.toString() || '{}'),
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
-  // }));
-  // return answers;
-  return rows;
+  const answers: Answer[] = rows.map((row) => ({
+    ...row,
+    question: JSON.parse(row.question?.toString() || '{}'),
+    survey: JSON.parse(row.survey?.toString() || '{}'),
+    user: JSON.parse(row.user?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  }));
+  return answers;
+  // return rows;
 };
 
 const checkAnswersBySurvey = async (surveyID: number): Promise<Answer[]> => {
@@ -155,15 +155,15 @@ const getAnswersByPostcodeId = async (
   if (rows.length === 0) {
     throw new CustomError('No answers found', 404);
   }
-  // const answers: Answer[] = rows.map((row) => ({
-  //   ...row,
-  //   question: JSON.parse(row.question?.toString() || '{}'),
-  //   survey: JSON.parse(row.survey?.toString() || '{}'),
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
-  // }));
-  // return answers;
-  return rows;
+  const answers: Answer[] = rows.map((row) => ({
+    ...row,
+    question: JSON.parse(row.question?.toString() || '{}'),
+    survey: JSON.parse(row.survey?.toString() || '{}'),
+    user: JSON.parse(row.user?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  }));
+  return answers;
+  // return rows;
 };
 
 const getAnswersByCity = async (
@@ -226,15 +226,15 @@ const getAnswersByCity = async (
   if (rows.length === 0) {
     throw new CustomError('No answers found', 404);
   }
-  // const answers: Answer[] = rows.map((row) => ({
-  //   ...row,
-  //   question: JSON.parse(row.question?.toString() || '{}'),
-  //   survey: JSON.parse(row.survey?.toString() || '{}'),
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
-  // }));
-  // return answers;
-  return rows;
+  const answers: Answer[] = rows.map((row) => ({
+    ...row,
+    question: JSON.parse(row.question?.toString() || '{}'),
+    survey: JSON.parse(row.survey?.toString() || '{}'),
+    user: JSON.parse(row.user?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  }));
+  return answers;
+  // return rows;
 };
 
 const getThreeBestAnswerScoresBySurvey = async (surveyId: number) => {
