@@ -15,7 +15,7 @@ const getAllHousingCompanies = async (
   role: string
 ): Promise<HousingCompany[]> => {
   let sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
@@ -36,7 +36,7 @@ const getAllHousingCompanies = async (
 
   if (role === 'admin') {
     sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
@@ -59,22 +59,22 @@ const getAllHousingCompanies = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
-  //   ...row,
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
-  //   city: JSON.parse(row.city?.toString() || '{}'),
-  //   address: JSON.parse(row.address?.toString() || '{}')
-  // }));
-  // return housingCompanies;
-  return rows;
+  const housingCompanies: HousingCompany[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}'),
+    address: JSON.parse(row.address?.toString() || '{}')
+  }));
+  return housingCompanies;
+  // return rows;
 };
 
 const getHousingCompany = async (id: number, userID: number, role: string) => {
   let sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
+	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -92,9 +92,9 @@ const getHousingCompany = async (id: number, userID: number, role: string) => {
   let params = [id, userID];
   if (role === 'admin') {
     sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-    JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
+    JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -117,7 +117,15 @@ const getHousingCompany = async (id: number, userID: number, role: string) => {
   if (rows.length === 0) {
     throw new CustomError('Housing company not found', 404);
   }
-  return rows[0] as HousingCompany;
+  const housingCompanies: HousingCompany[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}'),
+    address: JSON.parse(row.address?.toString() || '{}')
+  }));
+  return housingCompanies[0];
+  // return rows[0] as HousingCompany;
 };
 
 const getHousingCompaniesByUser = async (
@@ -125,9 +133,9 @@ const getHousingCompaniesByUser = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
+	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -147,15 +155,15 @@ const getHousingCompaniesByUser = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
-  //   ...row,
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
-  //   city: JSON.parse(row.city?.toString() || '{}'),
-  //   address: JSON.parse(row.address?.toString() || '{}')
-  // }));
-  // return housingCompanies;
-  return rows;
+  const housingCompanies: HousingCompany[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}'),
+    address: JSON.parse(row.address?.toString() || '{}')
+  }));
+  return housingCompanies;
+  // return rows;
 };
 
 const getApartmentCountByHousingCompany = async (
@@ -196,9 +204,9 @@ const getHousingCompaniesByCurrentUser = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-   JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
+   JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -218,15 +226,15 @@ const getHousingCompaniesByCurrentUser = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
-  //   ...row,
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
-  //   city: JSON.parse(row.city?.toString() || '{}'),
-  //   address: JSON.parse(row.address?.toString() || '{}')
-  // }));
-  // return housingCompanies;
-  return rows;
+  const housingCompanies: HousingCompany[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}'),
+    address: JSON.parse(row.address?.toString() || '{}')
+  }));
+  return housingCompanies;
+  // return rows;
 };
 
 const getHousingCompaniesByPostcode = async (
@@ -234,9 +242,9 @@ const getHousingCompaniesByPostcode = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -256,15 +264,15 @@ const getHousingCompaniesByPostcode = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
-  //   ...row,
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
-  //   city: JSON.parse(row.city?.toString() || '{}'),
-  //   address: JSON.parse(row.address?.toString() || '{}')
-  // }));
-  // return housingCompanies;
-  return rows;
+  const housingCompanies: HousingCompany[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}'),
+    address: JSON.parse(row.address?.toString() || '{}')
+  }));
+  return housingCompanies;
+  // return rows;
 };
 
 const getHousingCompaniesByCity = async (
@@ -272,9 +280,9 @@ const getHousingCompaniesByCity = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -294,15 +302,15 @@ const getHousingCompaniesByCity = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
-  //   ...row,
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
-  //   city: JSON.parse(row.city?.toString() || '{}'),
-  //   address: JSON.parse(row.address?.toString() || '{}')
-  // }));
-  // return housingCompanies;
-  return rows;
+  const housingCompanies: HousingCompany[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}'),
+    address: JSON.parse(row.address?.toString() || '{}')
+  }));
+  return housingCompanies;
+  // return rows;
 };
 
 const getHousingCompaniesByStreet = async (
@@ -310,9 +318,9 @@ const getHousingCompaniesByStreet = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -332,14 +340,14 @@ const getHousingCompaniesByStreet = async (
   if (rows.length === 0) {
     throw new CustomError('No housing companies found', 404);
   }
-  // const housingCompanies: HousingCompany[] = rows.map((row) => ({
-  //   ...row,
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
-  //   city: JSON.parse(row.city?.toString() || '{}')
-  // }));
-  // return housingCompanies;
-  return rows;
+  const housingCompanies: HousingCompany[] = rows.map((row) => ({
+    ...row,
+    user: JSON.parse(row.user?.toString() || '{}'),
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}')
+  }));
+  return housingCompanies;
+  // return rows;
 };
 
 const postHousingCompany = async (

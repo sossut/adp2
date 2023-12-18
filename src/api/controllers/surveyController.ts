@@ -20,12 +20,7 @@ import {
   getApartmentCountByHousingCompany
 } from '../models/housingCompanyModel';
 import { deleteResultBySurvey, postResult } from '../models/resultModel';
-import { getAllActiveQuestions } from '../models/questionModel';
-import { postQuestionsUsedInSurvey } from '../models/questionsUsedInSurveyModel';
-import { QuestionsUsedInSurvey } from '../../interfaces/QuestionsUsedInSurvey';
-import { getAllSections } from '../models/sectionModel';
-import { postSectionsUsedInSurvey } from '../models/sectionsUsedInSurveyModel';
-import { SectionsUsedInSurvey } from '../../interfaces/SectionsUsedInSurvey';
+
 import { PostResult } from '../../interfaces/Result';
 import { getSurveyResultsAndCount } from '../../utils/utility';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -142,18 +137,7 @@ const surveyPost = async (
         .join(', ');
       throw new CustomError(messages, 400);
     }
-    const activeQuestions = await getAllActiveQuestions();
-    if (activeQuestions.length === 0) {
-      throw new CustomError('No active questions', 400);
-    }
-    const sections = await getAllSections();
-    if (sections.length === 0) {
-      throw new CustomError('No sections', 400);
-    }
-    const jsonQuestions = JSON.stringify(activeQuestions);
-    req.body.questions_used = jsonQuestions;
-    const jsonSections = JSON.stringify(sections);
-    req.body.sections_used = jsonSections;
+
     let check = true;
     while (check) {
       const key = randomstring.generate(12);
@@ -195,16 +179,7 @@ const surveyPost = async (
         message: 'survey added',
         id: result
       };
-      const questionsUsed = {
-        questions_used: jsonQuestions,
-        survey_id: result
-      } as QuestionsUsedInSurvey;
-      const sectionsUsed = {
-        sections_used: jsonSections,
-        survey_id: result
-      } as SectionsUsedInSurvey;
-      const result2 = await postQuestionsUsedInSurvey(questionsUsed);
-      const result3 = await postSectionsUsedInSurvey(sectionsUsed);
+
       const resultData = {
         survey_id: result,
         date_time: new Date(),
@@ -213,7 +188,7 @@ const surveyPost = async (
         answer_count: 0
       } as PostResult;
       const resultResult = await postResult(resultData);
-      if (result2 && result3 && resultResult) {
+      if (resultResult) {
         res.json(message);
       }
     }

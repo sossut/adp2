@@ -5,7 +5,7 @@ import { GetUser, PostUser, PutUser, User } from '../../interfaces/User';
 
 const getAllUsers = async (): Promise<User[]> => {
   const [rows] = await promisePool.execute<GetUser[]>(
-    `SELECT id, user_name, email, role
+    `SELECT id, username, email, role
     FROM users`
   );
   if (rows.length === 0) {
@@ -16,7 +16,7 @@ const getAllUsers = async (): Promise<User[]> => {
 
 const getUser = async (id: number): Promise<User> => {
   const [rows] = await promisePool.execute<GetUser[]>(
-    `SELECT id, user_name, email, role
+    `SELECT id, username, email, role
     FROM users
     WHERE id = ?`,
     [id]
@@ -29,7 +29,7 @@ const getUser = async (id: number): Promise<User> => {
 
 const postUser = async (user: PostUser) => {
   const [headers] = await promisePool.execute<ResultSetHeader>(
-    `INSERT INTO users (user_name, email, password)
+    `INSERT INTO users (username, email, password)
     VALUES (?, ?, ?)`,
     [user.username, user.email, user.password]
   );
@@ -71,7 +71,7 @@ const getUserLogin = async (email: string): Promise<User> => {
     [email]
   );
   if (rows.length === 0) {
-    throw new CustomError('Invalid username/password', 200);
+    throw new CustomError('Invalid username/password', 401);
   }
   return rows[0];
 };

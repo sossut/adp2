@@ -22,7 +22,8 @@ import {
   PostQuestionChoice,
   PutQuestionChoice
 } from '../../interfaces/QuestionChoice';
-import { getQuestionsUsedInSurveyBySurveyKey } from '../models/questionsUsedInSurveyModel';
+
+import { getQuestionnaireBySurveyKey } from '../models/questionnaraireModal';
 
 const questionListGet = async (
   req: Request,
@@ -56,15 +57,9 @@ const questionListBySurveyKeyGet = async (
   next: NextFunction
 ) => {
   try {
-    const questions = await getQuestionsUsedInSurveyBySurveyKey(req.params.key);
-    const jsonQuestions = {
-      id: questions.id,
-      questions_used: JSON.parse(questions.questions_used.toString()),
-      survey_id: questions.survey_id,
-      survey: questions.survey
-    };
+    const questionnaire = await getQuestionnaireBySurveyKey(req.params.key);
 
-    res.json(jsonQuestions);
+    res.json(questionnaire);
   } catch (error) {
     next(error);
   }
@@ -137,8 +132,10 @@ const questionPut = async (
     if ((req.user as User).role !== 'admin') {
       throw new CustomError('Unauthorized', 401);
     }
+    const id = parseInt(req.params.id);
     try {
       const question = await getQuestionOnly(req.params.id);
+
       const oldQuestionOrder = question.question_order;
       const newQuestionOrder = req.body.question_order;
       const questions = await getAllQuestionsOnly();
@@ -160,26 +157,24 @@ const questionPut = async (
           await putQuestion(q, q.id);
         }
       }
-    } catch (error) {
-      next(error);
-    }
-
+    } catch (error) {}
     const choices = req.body.choices as PutQuestionChoice[];
+
     if (choices) {
-      const questionsChoises = await getQuestionChoiceIdsByQuestionId(
-        parseInt(req.params.id)
-      );
+      const questionsChoises = await getQuestionChoiceIdsByQuestionId(id);
+
       for (let i = 0; i < questionsChoises.length; i++) {
         const qC = {
-          question_id: parseInt(req.params.id),
+          question_id: id,
           choice_id: choices[i].choice_id
         };
+
         await putQuestionChoice(qC, questionsChoises[i].id);
       }
       delete req.body.choices;
     }
     const question = req.body;
-    const result = await putQuestion(question, parseInt(req.params.id));
+    const result = await putQuestion(question, id);
     if (result) {
       res.json({
         message: 'question updated'

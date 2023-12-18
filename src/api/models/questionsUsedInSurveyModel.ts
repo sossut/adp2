@@ -51,7 +51,12 @@ const getQuestionsUsedInSurveyBySurveyKey = async (
   if (rows.length === 0) {
     throw new CustomError('No questions_used_in_survey found', 404);
   }
-  return rows[0];
+  const questions: QuestionsUsedInSurvey[] = rows.map((row) => ({
+    ...row,
+    survey: JSON.parse(row.survey?.toString() || '{}')
+  }));
+  return questions[0];
+  // return rows[0];
 };
 
 const getQuestionsUsedInSurveyBySurveyId = async (

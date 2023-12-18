@@ -22,13 +22,13 @@ const getAllStreets = async (): Promise<Street[]> => {
   if (rows.length === 0) {
     throw new CustomError('No streets found', 404);
   }
-  // const postcodes: Street[] = rows.map((row) => ({
-  //   ...row,
-  //   postcode: JSON.parse(row.postcode?.toString() || '{}'),
-  //   city: JSON.parse(row.city?.toString() || '{}')
-  // }));
-  // return postcodes;
-  return rows;
+  const postcodes: Street[] = rows.map((row) => ({
+    ...row,
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}')
+  }));
+  return postcodes;
+  // return rows;
 };
 
 const getStreet = async (id: string): Promise<GetStreet> => {
@@ -47,7 +47,13 @@ const getStreet = async (id: string): Promise<GetStreet> => {
   if (rows.length === 0) {
     throw new CustomError('No streets found', 404);
   }
-  return rows[0];
+  const postcodes: GetStreet[] = rows.map((row) => ({
+    ...row,
+    postcode: JSON.parse(row.postcode?.toString() || '{}'),
+    city: JSON.parse(row.city?.toString() || '{}')
+  }));
+  return postcodes[0];
+  // return rows[0];
 };
 
 const getStreetIdByNameAndPostcodeID = async (

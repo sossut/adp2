@@ -1,20 +1,25 @@
 import { NextFunction, Request, Response } from 'express';
 
 import ErrorResponse from './interfaces/ErrorResponse';
+import CustomError from './classes/CustomError';
 
-
-export function notFound(req: Request, res: Response, next: NextFunction) {
-  res.status(404);
-  const error = new Error(`🔍 - Not Found - ${req.originalUrl}`);
+const notFound = (req: Request, res: Response, next: NextFunction) => {
+  const error = new CustomError(`🔍 - Not Found - ${req.originalUrl}`, 404);
   next(error);
-}
+};
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function errorHandler(err: Error, req: Request, res: Response<ErrorResponse>, next: NextFunction) {
-  const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
-  res.status(statusCode);
+const errorHandler = (
+  err: CustomError,
+  req: Request,
+  res: Response<ErrorResponse>,
+  next: NextFunction
+) => {
+  // console.error('errorHandler', chalk.red(err.stack));
+  res.status(err.status || 500);
   res.json({
     message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
+    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack
   });
-}
+};
+
+export { notFound, errorHandler };

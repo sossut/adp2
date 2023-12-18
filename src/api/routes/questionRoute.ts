@@ -34,7 +34,8 @@ router.route('/active').get(questionActiveListGet);
 router
   .route('/:id')
   .get(param('id').isNumeric(), questionGet)
-  .put(passport.authenticate('jwt', { session: false }), questionPut)
+  .put(passport.authenticate('jwt', { session: false }),
+  param('id').isNumeric(), questionPut)
   .delete(passport.authenticate('jwt', { session: false }), questionDelete);
 
 export default router;

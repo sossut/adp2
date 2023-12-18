@@ -68,7 +68,13 @@ const getQuestionChoicesByQuestionId = async (
   if (rows.length === 0) {
     throw new CustomError('No question_choices found', 404);
   }
-  return rows;
+  const questionChoices: GetQuestionChoice[] = rows.map((row) => ({
+    ...row,
+    question: JSON.parse(row.question),
+    choices: JSON.parse(`[${row.choices}]`)
+  }));
+  return questionChoices;
+  // return rows;
 };
 
 const postQuestionChoice = async (questionChoice: PostQuestionChoice) => {

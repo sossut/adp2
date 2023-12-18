@@ -16,7 +16,6 @@ import { User } from '../../interfaces/User';
 import { checkIfSurveyBelongsToUser } from '../models/surveyModel';
 import { getSectionSummaryBySectionIdAndResult } from '../models/sectionSummaryModel';
 
-import { getSectionsUsedInSurveyBySurveyId } from '../models/sectionsUsedInSurveyModel';
 import {
   checkAnswersBySurvey,
   getAnswersByPostcodeId,
@@ -25,6 +24,7 @@ import {
 } from '../models/answerModel';
 import { categoryCounter, getSurveyResultsAndCount } from '../../utils/utility';
 import { getPostcode } from '../models/postcodeModel';
+import { getQuestionnaireSectionsBySurveyId } from '../models/questionnaraireModal';
 
 const resultListGet = async (
   req: Request,
@@ -85,12 +85,11 @@ const resultGet = async (
     const sectionTwoResult = result.result_summary.section_two;
     const sectionThreeResult = result.result_summary.section_three;
 
-    const sections = await getSectionsUsedInSurveyBySurveyId(
+    const sections = await getQuestionnaireSectionsBySurveyId(
       result.survey_id as number
     );
-    const sectionParsed = JSON.parse(sections.sections_used);
 
-    const sectionIDs = sectionParsed.map((section: any) => section.id);
+    const sectionIDs = sections.map((section: any) => section.id);
 
     const sectionOneSummary = await getSectionSummaryBySectionIdAndResult(
       sectionIDs[0],
@@ -188,12 +187,11 @@ const resultGetBySurveyId = async (
     const sectionTwoResult = result.result_summary.section_two;
     const sectionThreeResult = result.result_summary.section_three;
 
-    const sections = await getSectionsUsedInSurveyBySurveyId(
+    const sections = await getQuestionnaireSectionsBySurveyId(
       result.survey_id as number
     );
-    const sectionParsed = JSON.parse(sections.sections_used);
 
-    const sectionIDs = sectionParsed.map((section: any) => section.id);
+    const sectionIDs = sections.map((section: any) => section.id);
 
     const sectionOneSummary = await getSectionSummaryBySectionIdAndResult(
       sectionIDs[0],

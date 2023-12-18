@@ -105,7 +105,7 @@ const userPost = async (
     if (result) {
       res.json({
         message: 'user added',
-        user_id: result
+        id: result
       });
     } else {
       throw new CustomError('no user inserted', 400);

@@ -4,8 +4,13 @@ import { Request, Response, NextFunction } from 'express';
 
 const production = (app: any, port: string, httpsPort: string) => {
   app.enable('trust proxy');
-  // const sslkey = fs.readFileSync('/etc/pki/tls/private/ca.key');
-  const sslcert = fs.readFileSync('/etc/secrets/ca.crt.pem');
+  const sslcert = fs.readFileSync(
+    '/etc/letsencrypt/live/shtsvr.mooo.com/fullchain.pem'
+  );
+  const sslkey = fs.readFileSync(
+    '/etc/letsencrypt/live/shtsvr.mooo.com/privkey.pem'
+  );
+  const ca = fs.readFileSync('/etc/letsencrypt/live/shtsvr.mooo.com/chain.pem');
   const options = {
     // key: sslkey,
     cert: sslcert

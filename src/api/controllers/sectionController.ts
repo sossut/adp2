@@ -10,7 +10,8 @@ import { Request, Response, NextFunction } from 'express';
 import CustomError from '../../classes/CustomError';
 import { PostSection } from '../../interfaces/Section';
 import { User } from '../../interfaces/User';
-import { getSectionsUsedInSurveyBySurveyKey } from '../models/sectionsUsedInSurveyModel';
+
+import { getQuestionnaireSectionsBySurveyKey } from '../models/questionnaraireModal';
 
 const sectionGet = async (
   req: Request<{ id: string }, {}, {}>,
@@ -44,9 +45,8 @@ const sectionListGetBySurveyKey = async (
   next: NextFunction
 ) => {
   try {
-    const sections = await getSectionsUsedInSurveyBySurveyKey(req.params.key);
-    const jsonSections = JSON.parse(sections.sections_used.toString());
-    res.json(jsonSections);
+    const sections = await getQuestionnaireSectionsBySurveyKey(req.params.key);
+    res.json(sections);
   } catch (error) {
     next(error);
   }

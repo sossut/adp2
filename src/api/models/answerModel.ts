@@ -37,7 +37,7 @@ const getAnswersBySurvey = async (
   let sql = `SELECT answers.id, question_id, answer, survey_id, 
     JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight, 'section_id', questions.section_id) AS question,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
 	 FROM answers
     JOIN questions
@@ -54,7 +54,7 @@ const getAnswersBySurvey = async (
     sql = `SELECT answers.id, question_id, answer, survey_id, 
     JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight, 'section_id', questions.section_id) AS question,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
     FROM answers
     JOIN questions
@@ -73,15 +73,15 @@ const getAnswersBySurvey = async (
   if (rows.length === 0) {
     throw new CustomError('No answers found', 404);
   }
-  // const answers: Answer[] = rows.map((row) => ({
-  //   ...row,
-  //   question: JSON.parse(row.question?.toString() || '{}'),
-  //   survey: JSON.parse(row.survey?.toString() || '{}'),
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
-  // }));
-  // return answers;
-  return rows;
+  const answers: Answer[] = rows.map((row) => ({
+    ...row,
+    question: JSON.parse(row.question?.toString() || '{}'),
+    survey: JSON.parse(row.survey?.toString() || '{}'),
+    user: JSON.parse(row.user?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  }));
+  return answers;
+  // return rows;
 };
 
 const checkAnswersBySurvey = async (surveyID: number): Promise<Answer[]> => {
@@ -107,7 +107,7 @@ const getAnswersByPostcodeId = async (
   let sql = `SELECT answers.id, question_id, answer, survey_id, questions.section_id, questions.question_category_id,
     JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
     FROM answers
     JOIN questions
@@ -130,7 +130,7 @@ const getAnswersByPostcodeId = async (
     sql = `SELECT answers.id, question_id, answer, survey_id, questions.section_id, questions.question_category_id,
     JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
     FROM answers
     JOIN questions
@@ -155,15 +155,15 @@ const getAnswersByPostcodeId = async (
   if (rows.length === 0) {
     throw new CustomError('No answers found', 404);
   }
-  // const answers: Answer[] = rows.map((row) => ({
-  //   ...row,
-  //   question: JSON.parse(row.question?.toString() || '{}'),
-  //   survey: JSON.parse(row.survey?.toString() || '{}'),
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
-  // }));
-  // return answers;
-  return rows;
+  const answers: Answer[] = rows.map((row) => ({
+    ...row,
+    question: JSON.parse(row.question?.toString() || '{}'),
+    survey: JSON.parse(row.survey?.toString() || '{}'),
+    user: JSON.parse(row.user?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  }));
+  return answers;
+  // return rows;
 };
 
 const getAnswersByCity = async (
@@ -174,7 +174,7 @@ const getAnswersByCity = async (
   let sql = `SELECT answers.id, question_id, answer, survey_id, questions.section_id, questions.question_category_id,
     JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
    FROM answers
     JOIN questions
@@ -199,7 +199,7 @@ const getAnswersByCity = async (
     sql = `SELECT answers.id, question_id, answer, survey_id, questions.section_id, questions.question_category_id,
     JSON_OBJECT('question', questions.question, 'weight', questions.weight, 'weight', questions.weight) AS question,
     JSON_OBJECT('survey_id', surveys.id, 'start_date', surveys.start_date, 'end_date', surveys.end_date, 'min_responses', surveys.min_responses, 'max_responses', surveys.max_responses, 'survey_status', surveys.survey_status, 'user_id', surveys.user_id, 'survey_key', surveys.survey_key, 'housing_company_id', surveys.housing_company_id) AS survey,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('housing_company_id', housing_companies.id, 'name', housing_companies.name) AS housing_company
     FROM answers
     JOIN questions
@@ -226,15 +226,15 @@ const getAnswersByCity = async (
   if (rows.length === 0) {
     throw new CustomError('No answers found', 404);
   }
-  // const answers: Answer[] = rows.map((row) => ({
-  //   ...row,
-  //   question: JSON.parse(row.question?.toString() || '{}'),
-  //   survey: JSON.parse(row.survey?.toString() || '{}'),
-  //   user: JSON.parse(row.user?.toString() || '{}'),
-  //   housing_company: JSON.parse(row.housing_company?.toString() || '{}')
-  // }));
-  // return answers;
-  return rows;
+  const answers: Answer[] = rows.map((row) => ({
+    ...row,
+    question: JSON.parse(row.question?.toString() || '{}'),
+    survey: JSON.parse(row.survey?.toString() || '{}'),
+    user: JSON.parse(row.user?.toString() || '{}'),
+    housing_company: JSON.parse(row.housing_company?.toString() || '{}')
+  }));
+  return answers;
+  // return rows;
 };
 
 const getThreeBestAnswerScoresBySurvey = async (surveyId: number) => {

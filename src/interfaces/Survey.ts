@@ -1,6 +1,7 @@
 import { RowDataPacket } from 'mysql2';
 import { HousingCompany } from './HousingCompany';
 import { User } from './User';
+import { Questionnaire } from './Questionnaire';
 
 interface Survey {
   id: number;
@@ -12,12 +13,14 @@ interface Survey {
   user_id: User | number;
   survey_key: string;
   housing_company_id: HousingCompany | number;
+  questionnaire_id: number | Questionnaire;
   questions_used?: string;
   sections_used?: string;
   result_value?: string;
   result?:
     | 'not enough answers'
     | {
+        totalResult: number;
         totalResultValue: String;
         section1ResultValue: String;
         section2ResultValue: String;

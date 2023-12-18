@@ -63,14 +63,19 @@ const housingCompanyListGet = async (
               (req.user as User).id,
               (req.user as User).role
             );
+
             let foundResult = false;
             await Promise.all(
               surveys.map(async (survey) => {
                 if (!foundResult) {
                   if (survey.result != 'not enough answers') {
                     const result = await getSurveyResultsAndCount(survey.id);
-                    const { totalResultValue } = result as any;
-                    hc.survey_result = totalResultValue;
+
+                    const { totalResultValue, totalResult } = result as any;
+                    hc.survey_result = {
+                      totalResultValue: totalResultValue,
+                      totalResult: totalResult
+                    };
                     foundResult = true;
                   }
                 }
