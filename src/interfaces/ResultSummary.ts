@@ -1,9 +1,11 @@
 import { RowDataPacket } from 'mysql2';
+import { Questionnaire } from './Questionnaire';
 
 interface ResultSummary {
   id: number;
   summary: string;
   recommendation: string;
+  questionnaire_id: number | Questionnaire;
   section_one: string;
   section_two: string;
   section_three: string;

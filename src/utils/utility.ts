@@ -192,6 +192,7 @@ const getSurveyResultsAndCount = async (
     await changeResultSummary(resultSummaryId.id, id);
   }
   return {
+    totalResult,
     totalResultValue,
     section1ResultValue,
     section2ResultValue,

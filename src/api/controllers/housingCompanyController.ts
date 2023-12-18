@@ -58,31 +58,30 @@ const housingCompanyListGet = async (
         housingCompanies.map(async (hc) => {
           let surveys;
           try {
-
             surveys = await getSurveysByHousingCompanyByTime(
               hc.id,
               (req.user as User).id,
               (req.user as User).role
             );
-            console.log('kikkeli');
-            console.log(surveys);
+
             let foundResult = false;
             await Promise.all(
               surveys.map(async (survey) => {
                 if (!foundResult) {
                   if (survey.result != 'not enough answers') {
                     const result = await getSurveyResultsAndCount(survey.id);
-                    console.log(result);
-                    const { totalResultValue } = result as any;
-                    hc.survey_result = totalResultValue;
+
+                    const { totalResultValue, totalResult } = result as any;
+                    hc.survey_result = {
+                      totalResultValue: totalResultValue,
+                      totalResult: totalResult
+                    };
                     foundResult = true;
                   }
                 }
               })
             );
-          } catch (error) {
-            console.log(error);
-          }
+          } catch (error) {}
         })
       );
     } catch (error) {}

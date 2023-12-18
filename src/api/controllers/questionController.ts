@@ -22,7 +22,8 @@ import {
   PostQuestionChoice,
   PutQuestionChoice
 } from '../../interfaces/QuestionChoice';
-import { getQuestionsUsedInSurveyBySurveyKey } from '../models/questionsUsedInSurveyModel';
+
+import { getQuestionnaireBySurveyKey } from '../models/questionnaraireModal';
 
 const questionListGet = async (
   req: Request,
@@ -56,15 +57,9 @@ const questionListBySurveyKeyGet = async (
   next: NextFunction
 ) => {
   try {
-    const questions = await getQuestionsUsedInSurveyBySurveyKey(req.params.key);
-    const jsonQuestions = {
-      id: questions.id,
-      questions_used: JSON.parse(questions.questions_used.toString()),
-      survey_id: questions.survey_id,
-      survey: questions.survey
-    };
+    const questionnaire = await getQuestionnaireBySurveyKey(req.params.key);
 
-    res.json(jsonQuestions);
+    res.json(questionnaire);
   } catch (error) {
     next(error);
   }
@@ -126,7 +121,6 @@ const questionPut = async (
   next: NextFunction
 ) => {
   try {
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const messages = errors
@@ -141,7 +135,7 @@ const questionPut = async (
     const id = parseInt(req.params.id);
     try {
       const question = await getQuestionOnly(req.params.id);
- 
+
       const oldQuestionOrder = question.question_order;
       const newQuestionOrder = req.body.question_order;
       const questions = await getAllQuestionsOnly();
@@ -163,9 +157,7 @@ const questionPut = async (
           await putQuestion(q, q.id);
         }
       }
-    } catch (error) {
- 
-    }
+    } catch (error) {}
     const choices = req.body.choices as PutQuestionChoice[];
 
     if (choices) {
@@ -176,7 +168,7 @@ const questionPut = async (
           question_id: id,
           choice_id: choices[i].choice_id
         };
-        console.log(qC, questionsChoises[i].id);
+
         await putQuestionChoice(qC, questionsChoises[i].id);
       }
       delete req.body.choices;

@@ -11,6 +11,7 @@ import surveyRoute from './routes/surveyRoute';
 import answerRoute from './routes/answerRoute';
 import resultRoute from './routes/resultRoute';
 import choiceRoute from './routes/choiceRoute';
+import questionnaireRoute from './routes/questionnaireRoute';
 import MessageResponse from '../interfaces/MessageResponse';
 import passport from 'passport';
 
@@ -37,5 +38,6 @@ router.use('/survey', surveyRoute);
 router.use('/answer', answerRoute);
 router.use('/result', resultRoute);
 router.use('/choice', choiceRoute);
+router.use('/questionnaire', questionnaireRoute);
 
 export default router;

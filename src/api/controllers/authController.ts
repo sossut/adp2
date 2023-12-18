@@ -11,7 +11,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
     { session: false },
     (err: Error, user: Partial<User>) => {
       if (err || !user) {
-        next(new CustomError('Invalid username/password', 200));
+        next(new CustomError('Invalid username/password', 401));
         return;
       }
       req.login(user, { session: false }, (error) => {

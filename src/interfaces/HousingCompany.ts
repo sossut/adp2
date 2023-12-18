@@ -22,7 +22,7 @@ interface HousingCompany {
   postcode_name?: string;
   city_name?: string;
   postcode?: string | Postcode;
-  survey_result?: string;
+  survey_result?: Object;
   survey?: Survey;
   city?: City;
   address?: Address;

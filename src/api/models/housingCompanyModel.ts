@@ -15,7 +15,7 @@ const getAllHousingCompanies = async (
   role: string
 ): Promise<HousingCompany[]> => {
   let sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
@@ -36,9 +36,9 @@ const getAllHousingCompanies = async (
 
   if (role === 'admin') {
     sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
-	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name 'area', area) AS postcode,
+	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name, 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
     FROM housing_companies
     JOIN users
@@ -72,7 +72,7 @@ const getAllHousingCompanies = async (
 
 const getHousingCompany = async (id: number, userID: number, role: string) => {
   let sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
@@ -92,7 +92,7 @@ const getHousingCompany = async (id: number, userID: number, role: string) => {
   let params = [id, userID];
   if (role === 'admin') {
     sql = `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
     JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
@@ -133,7 +133,7 @@ const getHousingCompaniesByUser = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	  JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
@@ -204,7 +204,7 @@ const getHousingCompaniesByCurrentUser = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
    JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
@@ -242,7 +242,7 @@ const getHousingCompaniesByPostcode = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
@@ -280,7 +280,7 @@ const getHousingCompaniesByCity = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id, location,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
@@ -318,7 +318,7 @@ const getHousingCompaniesByStreet = async (
 ): Promise<HousingCompany[]> => {
   const [rows] = await promisePool.execute<GetHousingCompany[]>(
     `SELECT housing_companies.id, housing_companies.NAME, apartment_count, address_id, housing_companies.user_id,
-    JSON_OBJECT('user_id', users.id, 'user_name', users.user_name) AS user,
+    JSON_OBJECT('user_id', users.id, 'username', users.username) AS user,
     JSON_OBJECT('address_id', addresses.id, 'street', streets.name, 'number', addresses.number) AS address,
 	 JSON_OBJECT('postcode_id', postcodes.id, 'code', postcodes.code, 'name', postcodes.name 'area', area) AS postcode,
     JSON_OBJECT('city_id', cities.id, 'name', cities.name) AS city
