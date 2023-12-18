@@ -1,23 +1,3 @@
-DROP DATABASE IF EXISTS adp_innovation;
-CREATE DATABASE adp_innovation;
-USE adp_innovation;
-DROP TABLE IF EXISTS answers;
-DROP TABLE IF EXISTS results;
-DROP TABLE IF EXISTS result_summaries;
-DROP TABLE IF EXISTS questions_used_in_survey;
-DROP TABLE IF EXISTS surveys;
-DROP TABLE IF EXISTS questions_choices;
-DROP TABLE IF EXISTS choices;
-DROP TABLE IF EXISTS questions;
-DROP TABLE if EXISTS section_summaries;
-DROP TABLE IF EXISTS sections;
-DROP TABLE IF EXISTS housing_companies;
-DROP TABLE IF EXISTS addresses;
-DROP TABLE IF EXISTS streets;
-DROP TABLE IF EXISTS postcodes;
-DROP TABLE IF EXISTS cities;
-DROP TABLE IF EXISTS users;
-
 CREATE TABLE users
 (
 	id INT NOT NULL AUTO_INCREMENT,
@@ -26,7 +6,7 @@ CREATE TABLE users
 	email TEXT NOT NULL,
 	role VARCHAR(255) NOT NULL DEFAULT 'user',
 	PRIMARY KEY (id),
-	UNIQUE (username(255), email(255))
+	UNIQUE (user_name(255), email(255))
 );
 
 
@@ -164,10 +144,10 @@ CREATE TABLE questionnaires (
 
 );
 
-CREATE TABLE questionnaires_questions (
+CREATE TABLE questionnaires_sections (
   id int NOT NULL AUTO_INCREMENT,
   questionnaire_id int NOT NULL,
-  question_id int NOT NULL,
+  section_id int NOT NULL,
   PRIMARY KEY (id),
 FOREIGN KEY (questionnaire_id) REFERENCES questionnaires (id),
 FOREIGN KEY (question_id) REFERENCES `questions` (id)
@@ -185,10 +165,12 @@ CREATE TABLE surveys
 	date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user_id INT NOT NULL,
 	housing_company_id INT NOT NULL,
+	questionnaire_id INT NOT NULL,
 	UNIQUE (survey_key(255)),
 	PRIMARY KEY (id),
 	FOREIGN KEY (user_id) REFERENCES users(id),
-	FOREIGN KEY (housing_company_id) REFERENCES housing_companies(id)
+	FOREIGN KEY (housing_company_id) REFERENCES housing_companies(id),
+	FOREIGN KEY (questionnaire_id) REFERENCES questionnaires(id)
 );
 
 CREATE TABLE questions_used_in_survey
@@ -254,3 +236,30 @@ CREATE TABLE section_summaries
 	PRIMARY KEY (id),
 	FOREIGN KEY (section_id) REFERENCES sections(id)
 );
+
+DROP VIEW IF EXISTS questions_choices_summary;
+CREATE VIEW questions_choices_summary AS
+	SELECT
+		JSON_OBJECT ('question_id', questions.id, 'question', questions.question, 'weight', questions.weight, 'question_order', questions.question_order, 'active', active, 'section_id', section_id, 'question_category_id', question_category_id) AS question,
+		CONCAT('[', GROUP_CONCAT(JSON_OBJECT('choices_id', choices.id, 'choice_text', choices.choice_text, 'choice_value', choices.choice_value)), ']') AS choices
+	FROM questions
+		JOIN questions_choices
+			ON questions.id = questions_choices.question_id
+		JOIN choices
+			ON questions_choices.choice_id = choices.id
+	GROUP BY question_id
+	ORDER BY question_order ASC;
+
+DROP VIEW IF EXISTS questions_choices_summary_active;
+CREATE VIEW questions_choices_summary_active AS
+	SELECT
+		JSON_OBJECT ('question_id', questions.id, 'question', questions.question, 'weight', questions.weight, 'question_order', questions.question_order, 'active', active, 'section_id', section_id, 'question_category_id', question_category_id) AS question,
+		CONCAT('[', GROUP_CONCAT(JSON_OBJECT('choices_id', choices.id, 'choice_text', choices.choice_text, 'choice_value', choices.choice_value)), ']') AS choices
+	FROM questions
+		JOIN questions_choices
+			ON questions.id = questions_choices.question_id
+		JOIN choices
+			ON questions_choices.choice_id = choices.id
+	WHERE questions.active = 'true'		
+	GROUP BY question_id
+	ORDER BY section_id ASC, question_order ASC;

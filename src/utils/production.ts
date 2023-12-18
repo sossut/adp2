@@ -12,8 +12,9 @@ const production = (app: any, port: string, httpsPort: string) => {
   );
   const ca = fs.readFileSync('/etc/letsencrypt/live/shtsvr.mooo.com/chain.pem');
   const options = {
-    // key: sslkey,
-    cert: sslcert
+    key: sslkey,
+    cert: sslcert,
+    ca: ca
   };
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.secure) {
